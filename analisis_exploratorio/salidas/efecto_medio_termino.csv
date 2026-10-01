@@ -1,0 +1,5 @@
+year,pres_party,tipo_ciclo,median,mean,std,count
+2018,R,medio término,-0.0524,-0.0492,0.064,50
+2020,R,presidencial,0.0336,0.0414,0.0588,50
+2022,D,medio término,-0.0192,-0.0281,0.0517,50
+2024,D,presidencial,0.0012,0.021,0.08,50

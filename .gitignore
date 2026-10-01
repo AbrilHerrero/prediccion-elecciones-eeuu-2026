@@ -1,0 +1,11 @@
+# Fuentes primarias (se descargan de FEC y del Clerk; ver README)
+excelsElecciones/
+
+# Entorno y archivos generados por Python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Sistema
+.DS_Store
