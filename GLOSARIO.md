@@ -252,7 +252,7 @@ se realizó. Por eso se dejan vacías en vez de imputarse.
 | Columnas vacías | Filas | Motivo |
 |---|---|---|
 | `pres_*`, `house_dropoff`, `nat_pres_dem_share_2p` | 2018, 2022, 2026 | Años sin elección presidencial |
-| `senate_*` | Estados sin elección al Senado ese año | Cada estado elige 1/3 del Senado por ciclo |
+| `senate_*` | Estados sin elección al Senado ese año | Cada 2 años se renueva 1/3 de las bancas (33–35), así que 16 o 17 estados no eligen senador |
 | `senate_dem_share_2p` | Elecciones al Senado sin enfrentamiento D vs R | Por ejemplo, Sanders (independiente) en Vermont |
 | `*_lag`, `*_prev`, `house_dem_swing` | 2016 | Primer año del panel |
 | `house_primary_*` | 2024 y 2026 | El Clerk publica solo la elección general |

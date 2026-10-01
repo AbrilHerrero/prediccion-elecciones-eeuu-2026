@@ -122,16 +122,17 @@ ax.grid(False)
 for i in range(len(variables)):
     for j in range(len(variables)):
         v = pearson.values[i, j]
-        if np.isnan(v):   # nunca coexisten (p. ej. voto presidencial en años de medio término)
+        if np.isnan(v):   # sin variación conjunta: is_midterm es constante donde la otra tiene dato
             ax.add_patch(plt.Rectangle((j - 0.5, i - 0.5), 1, 1, color=GRIS_NEUTRO))
             ax.text(j, i, "—", ha="center", va="center", fontsize=8, color=GRIS)
             continue
         ax.text(j, i, f"{v:.2f}", ha="center", va="center", fontsize=7,
                 color="white" if abs(v) > 0.6 else TINTA)
 fig.colorbar(im, ax=ax, shrink=0.75, label="r de Pearson")
-ax.set_title("Matriz de correlación de Pearson (eliminación por pares)")
-ax.text(0, len(variables) + 1.6, "— : variables que nunca tienen dato en la misma fila",
-        fontsize=8, color=TINTA_2)
+ax.set_title("Matriz de correlación de Pearson (eliminación por pares)", pad=22)
+ax.text(0.5, 1.01, "— : correlación no definida (en las filas con dato, una de las dos variables "
+        "es constante)", transform=ax.transAxes, ha="center", va="bottom", fontsize=8,
+        color=TINTA_2)
 guardar(fig, "04_4_matriz_correlacion")
 
 # %% 2.2.3 Subconjuntos: todos vs solo disputados
