@@ -43,11 +43,15 @@ ciclos (por ejemplo, 2024: 215 D / 220 R). El script falla si no coinciden.
 La fundamentación completa (estado del arte, criterios de selección de fuentes y período,
 diccionario de datos, limitaciones) está en [`fundamentacion_dataset.md`](fundamentacion_dataset.md).
 
+Para leer el dataset columna por columna (sufijos, conceptos clave y diccionario por grupos con
+ejemplos), ver el [`GLOSARIO.md`](GLOSARIO.md).
+
 ## Estructura del repositorio
 
 ```
 .
 ├── README.md                       # este archivo
+├── GLOSARIO.md                     # sufijos y significado de cada columna del dataset
 ├── fundamentacion_dataset.md       # marco teórico, fuentes, criterios y diccionario de datos
 ├── construir_dataset.py            # genera el CSV desde las fuentes primarias
 ├── dataset_elecciones_estado.csv   # dataset final: 300 filas × 44 columnas
