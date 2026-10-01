@@ -1,0 +1,13 @@
+metodo,tipo,error_todos_pp,error_solo_disputados_pp
+Ridge · presidencial + Cámara anterior,modelo,3.0611,2.1018
+Regresión lineal · presidencial + Cámara anterior,modelo,3.0796,2.1221
+Ridge · presidencial + Cámara anterior + disputados,modelo,3.1126,2.1368
+Regresión lineal · presidencial + Cámara anterior + disputados,modelo,3.1291,2.1542
+Gradient boosting · presidencial + Cámara anterior,modelo,3.3566,2.3723
+Gradient boosting · presidencial + Cámara anterior + disputados,modelo,3.3892,2.3807
+Ridge · presidencial previa,modelo,3.3955,2.271
+Regresión lineal · presidencial previa,modelo,3.4174,2.3034
+Gradient boosting · presidencial previa,modelo,3.4507,2.4558
+Swing uniforme,línea base,3.5174,2.9061
+Usar la última presidencial,línea base,4.364,3.0275
+Repetir el ciclo anterior,línea base,4.5682,3.7218

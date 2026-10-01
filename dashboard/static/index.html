@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Predicción EE. UU. 2026</title>
+  <link rel="stylesheet" href="/static/estilo.css">
+  <script>
+    // Abierta como archivo, la página no tiene ni estilos ni datos: los sirve app.py.
+    if (!location.protocol.startsWith("http")) {
+      document.addEventListener("DOMContentLoaded", () => {
+        document.body.innerHTML =
+          '<div style="max-width:560px;margin:15vh auto;padding:24px;font:16px/1.5 system-ui,sans-serif;' +
+          'border:1px solid #e1e0d9;border-radius:10px;background:#fcfcfb;color:#0b0b0b">' +
+          '<h1 style="font-size:1.2rem;margin:0 0 8px">Esta página necesita el servidor</h1>' +
+          '<p style="margin:0 0 12px">Los estilos y los datos los entrega la API. Desde la carpeta <code>dashboard</code>, ejecutá:</p>' +
+          '<pre style="background:#f0efec;padding:10px;border-radius:6px;margin:0 0 12px">python app.py</pre>' +
+          '<p style="margin:0">y abrí <strong>http://127.0.0.1:8000</strong>.</p></div>';
+      });
+    }
+  </script>
+</head>
+<body>
+  <header class="encabezado">
+    <div>
+      <h1>Elecciones de medio término en EE. UU. · 3 de noviembre de 2026</h1>
+      <p class="subtitulo">Modelo de fundamentos entrenado con los resultados oficiales 2018–2024 (FEC y Clerk de la Cámara)</p>
+    </div>
+    <button id="boton-tema" class="boton-secundario" type="button" aria-label="Cambiar tema">Tema</button>
+  </header>
+
+  <main>
+    <section class="tarjeta controles" aria-labelledby="titulo-clima">
+      <div class="controles-fila">
+        <div class="controles-texto">
+          <h2 id="titulo-clima">Clima nacional</h2>
+          <p class="nota">Cuántos puntos de cuota nacional a la Cámara ganan los demócratas respecto de 2024. Es el supuesto que el modelo no puede estimar con solo dos elecciones de medio término.</p>
+        </div>
+        <div class="controles-valor">
+          <span id="valor-ganancia" class="valor-grande">+4,0 pp</span>
+          <span id="valor-cuota-nacional" class="nota">cuota D nacional 52,6 %</span>
+        </div>
+      </div>
+      <input id="deslizador-clima" type="range" step="0.5" aria-label="Corrimiento nacional hacia los demócratas, en puntos">
+      <div id="botones-escenario" class="chips" role="group" aria-label="Escenarios"></div>
+      <p id="antecedentes" class="nota"></p>
+    </section>
+
+    <section class="indicadores" aria-label="Resultado">
+      <article class="tarjeta indicador">
+        <h3>Cámara · bancas D esperadas</h3>
+        <p id="indicador-camara" class="valor-grande">—</p>
+        <p id="indicador-camara-rango" class="nota">—</p>
+        <div id="barra-camara" class="barra-bancas" role="img"></div>
+      </article>
+      <article class="tarjeta indicador">
+        <h3>Senado · bancas D esperadas</h3>
+        <p id="indicador-senado" class="valor-grande">—</p>
+        <p id="indicador-senado-detalle" class="nota">—</p>
+        <div id="barra-senado" class="barra-bancas" role="img"></div>
+      </article>
+      <article class="tarjeta indicador">
+        <h3>Probabilidad de control D del Senado</h3>
+        <p id="indicador-control-senado" class="valor-grande">—</p>
+        <p class="nota">Simulando el error de cada elección al Senado</p>
+      </article>
+    </section>
+
+    <section class="grilla-dos">
+      <article class="tarjeta">
+        <h2>Cámara: bancas D según el clima nacional</h2>
+        <p class="nota">Franja: error histórico de la cadena votos → bancas. Línea punteada: mayoría (218).</p>
+        <div id="grafico-barrido-camara" class="grafico-lineas"></div>
+      </article>
+      <article class="tarjeta">
+        <h2>Senado: bancas D según el clima nacional</h2>
+        <p class="nota">Incluye las 34 bancas D que no renuevan. Línea punteada: mayoría D (51).</p>
+        <div id="grafico-barrido-senado" class="grafico-lineas"></div>
+      </article>
+    </section>
+
+    <section class="grilla-dos">
+      <article class="tarjeta">
+        <div class="titulo-con-control">
+          <h2 id="titulo-mapa">Mapa por estado</h2>
+          <div class="chips" role="group" aria-label="Qué mostrar en el mapa">
+            <button type="button" class="chip activo" data-vista-mapa="camara">Cámara: cuota D</button>
+            <button type="button" class="chip" data-vista-mapa="senado">Senado: prob. victoria D</button>
+          </div>
+        </div>
+        <div id="mapa-de-estados" class="mapa-de-estados"></div>
+        <div id="leyenda-mapa" class="leyenda-divergente"></div>
+        <p class="nota">Borde grueso: mapa de distritos nuevo en 2026 (TX, CA, MO, NC, OH, UT), con bancas menos confiables.</p>
+      </article>
+      <article class="tarjeta">
+        <h2>Las 35 elecciones al Senado</h2>
+        <p class="nota">Probabilidad de que gane un candidato D genérico. En Nebraska compite un independiente sin candidato D.</p>
+        <div id="lista-senado" class="lista-senado"></div>
+      </article>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Tabla por estado</h2>
+      <p class="nota">Hacé clic en un encabezado para ordenar.</p>
+      <div class="contenedor-tabla">
+        <table id="tabla-estados">
+          <thead>
+            <tr>
+              <th data-columna="state_name">Estado</th>
+              <th data-columna="house_seats" class="numero">Bancas</th>
+              <th data-columna="camara_cuota_d_prevista" class="numero">Cuota D Cámara</th>
+              <th data-columna="camara_bancas_d_esperadas" class="numero">Bancas D esperadas</th>
+              <th data-columna="senado_cuota_d_prevista" class="numero">Cuota D Senado</th>
+              <th data-columna="senado_probabilidad_victoria_d" class="numero">Prob. victoria D Senado</th>
+              <th data-columna="mapa_nuevo_2026">Mapa nuevo</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="grilla-dos">
+      <article class="tarjeta">
+        <h2>Validación: error por método (2018–2024)</h2>
+        <p class="nota">Error absoluto medio en la cuota D por estado, dejando un año afuera.</p>
+        <div class="contenedor-tabla">
+          <table id="tabla-modelos">
+            <thead><tr><th>Método</th><th class="numero">Todos</th><th class="numero">Solo disputados</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </article>
+      <article class="tarjeta">
+        <h2>Validación: bancas D nacionales</h2>
+        <p class="nota">Previstas con la cadena completa (votos → bancas) vs reales.</p>
+        <div class="contenedor-tabla">
+          <table id="tabla-bancas">
+            <thead><tr><th>Año</th><th class="numero">Reales</th><th class="numero">Previstas</th><th class="numero">Diferencia</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <h3 class="limitaciones-titulo">Limitaciones</h3>
+        <ul class="nota limitaciones">
+          <li>El clima nacional es un supuesto: el escenario central sale de solo dos casos (2018 y 2022).</li>
+          <li>En años de ola, la curva votos → bancas se queda corta (2018: previó 214 bancas D, fueron 235).</li>
+          <li>El Senado se predice para un candidato D genérico: no ve incumbencia ni perfiles propios.</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+
+  <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+  <script src="/static/tablero.js"></script>
+</body>
+</html>

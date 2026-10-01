@@ -10,7 +10,7 @@ El trabajo sigue el ciclo de vida de un proyecto de ciencia de datos visto en cl
 |---|---|---|
 | 1. Definición del problema, fuentes y construcción del dataset | ✅ Completa | [`fundamentacion_dataset.md`](fundamentacion_dataset.md), [`construir_dataset.py`](construir_dataset.py) |
 | 2. Preprocesamiento y análisis descriptivo y exploratorio (correlaciones) | ✅ Completa | [`analisis_exploratorio/`](analisis_exploratorio/) |
-| 3. Modelo predictivo y estimación de bancas para 2026 | ⏳ Próxima etapa | — |
+| 3. Modelo predictivo y estimación de bancas para 2026 | 🚧 En curso | [`modelo/`](modelo/), [`dashboard/`](dashboard/) |
 
 ## Pregunta de investigación
 
@@ -62,6 +62,21 @@ diccionario de datos, limitaciones) está en [`fundamentacion_dataset.md`](funda
     ├── comun.py
     ├── figuras/                    # gráficos generados (PNG)
     └── salidas/                    # tablas generadas (CSV)
+└── modelo/
+    ├── README.md                   # enfoque, validación, predicción y limitaciones
+    ├── 05_validacion_cruzada.py    # elige el modelo de voto a la Cámara
+    ├── 06_curva_votos_bancas.py    # de votos a bancas
+    ├── 07_senado.py
+    ├── 08_prediccion_2026.py       # escenarios de clima nacional para 2026
+    ├── ejecutar_todo.py
+    ├── comun_modelo.py
+    ├── motor_de_prediccion.py      # entrenamiento final y predicción para un clima dado
+    ├── figuras/
+    └── salidas/
+└── dashboard/
+    ├── README.md
+    ├── app.py                      # API con FastAPI
+    └── static/                     # página del tablero (HTML, CSS, JS)
 ```
 
 ## Cómo reproducirlo
@@ -106,5 +121,5 @@ modelo predictivo de la próxima etapa.
 
 ## Tecnologías
 
-Python 3.9, pandas, matplotlib, openpyxl (lectura de Excel) y pdfplumber (lectura del PDF del
+Python 3.9, pandas, matplotlib, scikit-learn (modelo predictivo), FastAPI y Uvicorn (dashboard), openpyxl (lectura de Excel) y pdfplumber (lectura del PDF del
 Clerk).

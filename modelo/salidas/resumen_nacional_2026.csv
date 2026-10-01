@@ -1,0 +1,5 @@
+escenario,ganancia_democrata,cuota_d_nacional,camara_bancas_d_esperadas,camara_rango_inferior,camara_rango_superior,senado_bancas_d_esperadas,senado_probabilidad_control_d
+sin efecto de medio término,0.0,0.4868,211.2447,196.7172,225.7722,46.6019,0.0114
+efecto moderado,0.02,0.5068,219.4143,204.8868,233.9418,48.7805,0.1583
+promedio de 2018 y 2022,0.0397,0.5265,227.4871,212.9596,242.0146,50.9668,0.6007
+ola demócrata,0.06,0.5468,235.8175,221.29,250.345,53.2494,0.9378

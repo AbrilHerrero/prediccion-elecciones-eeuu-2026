@@ -1,0 +1,156 @@
+/* Paleta compartida con analisis_exploratorio/comun.py: azul D, rojo R, gris neutro al medio. */
+:root {
+  color-scheme: light;
+  --fondo-pagina: #f3f2ee;
+  --fondo-tarjeta: #fcfcfb;
+  --borde: #e1e0d9;
+  --grilla: #e1e0d9;
+  --texto-principal: #0b0b0b;
+  --texto-secundario: #52514e;
+  --texto-tenue: #898781;
+  --democrata: #2a78d6;
+  --republicano: #e34948;
+  --neutro-medio: #f0efec;
+  --acento: #4a3aa7;
+  --franja: rgba(42, 120, 214, 0.14);
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --fondo-pagina: #121211;
+    --fondo-tarjeta: #1a1a19;
+    --borde: #2e2e2b;
+    --grilla: #2e2e2b;
+    --texto-principal: #ffffff;
+    --texto-secundario: #c3c2b7;
+    --texto-tenue: #8f8e88;
+    --democrata: #3987e5;
+    --republicano: #e66767;
+    --neutro-medio: #383835;
+    --acento: #9085e9;
+    --franja: rgba(57, 135, 229, 0.2);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --fondo-pagina: #121211;
+  --fondo-tarjeta: #1a1a19;
+  --borde: #2e2e2b;
+  --grilla: #2e2e2b;
+  --texto-principal: #ffffff;
+  --texto-secundario: #c3c2b7;
+  --texto-tenue: #8f8e88;
+  --democrata: #3987e5;
+  --republicano: #e66767;
+  --neutro-medio: #383835;
+  --acento: #9085e9;
+  --franja: rgba(57, 135, 229, 0.2);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--fondo-pagina);
+  color: var(--texto-principal);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+h1 { font-size: 1.35rem; margin: 0; }
+h2 { font-size: 1rem; margin: 0 0 4px; }
+h3 { font-size: 0.85rem; margin: 0; color: var(--texto-secundario); font-weight: 600; }
+.subtitulo, .nota { color: var(--texto-secundario); margin: 4px 0 0; font-size: 0.85rem; }
+
+.encabezado {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+  max-width: 1200px; margin: 0 auto; padding: 24px 16px 8px;
+}
+main { max-width: 1200px; margin: 0 auto; padding: 8px 16px 40px; display: grid; gap: 16px; }
+
+.tarjeta {
+  background: var(--fondo-tarjeta); border: 1px solid var(--borde); border-radius: 10px;
+  padding: 16px; min-width: 0;
+}
+.grilla-dos { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
+.indicadores { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.valor-grande { font-size: 2rem; font-weight: 700; margin: 6px 0 0; font-variant-numeric: tabular-nums; }
+
+/* Controles */
+.controles-fila { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.controles-texto { flex: 1 1 380px; }
+.controles-valor { display: flex; flex-direction: column; align-items: flex-end; }
+#deslizador-clima { width: 100%; margin: 14px 0 10px; accent-color: var(--acento); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip, .boton-secundario {
+  border: 1px solid var(--borde); background: transparent; color: var(--texto-principal);
+  border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 0.8rem; cursor: pointer;
+}
+.chip.activo { background: var(--acento); border-color: var(--acento); color: #fff; }
+.chip:focus-visible, .boton-secundario:focus-visible, #deslizador-clima:focus-visible {
+  outline: 2px solid var(--acento); outline-offset: 2px;
+}
+
+/* Barra de bancas D | R con la marca de mayoría */
+.barra-bancas { position: relative; display: flex; height: 14px; margin-top: 12px; gap: 2px; }
+.barra-bancas .tramo-d { background: var(--democrata); border-radius: 4px 0 0 4px; }
+.barra-bancas .tramo-r { background: var(--republicano); border-radius: 0 4px 4px 0; flex: 1; }
+.barra-bancas .marca-mayoria {
+  position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--texto-principal);
+}
+
+/* Gráficos SVG */
+.grafico-lineas svg { width: 100%; height: auto; display: block; margin-top: 8px; }
+svg text { fill: var(--texto-tenue); font-size: 11px; }
+svg .linea-grilla { stroke: var(--grilla); stroke-width: 1; }
+svg .linea-mayoria { stroke: var(--texto-principal); stroke-width: 1; stroke-dasharray: 4 3; }
+svg .linea-serie { fill: none; stroke: var(--democrata); stroke-width: 2; }
+svg .franja { fill: var(--franja); }
+svg .marca-actual { stroke: var(--acento); stroke-width: 2; }
+svg .punto-actual { fill: var(--acento); stroke: var(--fondo-tarjeta); stroke-width: 2; }
+svg .cruz { stroke: var(--texto-tenue); stroke-width: 1; }
+
+/* Mapa de mosaicos */
+.titulo-con-control { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; }
+.mapa-de-estados {
+  display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; margin-top: 12px;
+}
+.mosaico {
+  aspect-ratio: 1; border-radius: 4px; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; font-size: clamp(8px, 1.2vw, 12px); font-weight: 600; cursor: default;
+  border: 2px solid transparent; line-height: 1.1; min-width: 0;
+}
+.mosaico span { font-weight: 400; font-size: 0.85em; }
+.mosaico.mapa-nuevo { border-color: var(--texto-principal); }
+.mosaico.sin-eleccion { background: transparent; border: 1px dashed var(--borde); color: var(--texto-tenue); }
+.leyenda-divergente { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 0.8rem; color: var(--texto-secundario); }
+.leyenda-divergente .degrade {
+  flex: 1; height: 10px; border-radius: 4px;
+  background: linear-gradient(90deg, var(--republicano), var(--neutro-medio), var(--democrata));
+}
+
+/* Lista del Senado */
+.lista-senado { display: grid; gap: 4px; margin-top: 10px; }
+.fila-senado { display: grid; grid-template-columns: 110px 1fr 44px; gap: 8px; align-items: center; font-size: 0.8rem; }
+.fila-senado .pista { position: relative; height: 12px; border: 1px solid var(--borde); border-radius: 4px; }
+.fila-senado .relleno { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 4px; }
+.fila-senado .mitad { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--texto-tenue); }
+.fila-senado .numero { text-align: right; font-variant-numeric: tabular-nums; color: var(--texto-secundario); }
+
+/* Tablas */
+.contenedor-tabla { overflow-x: auto; margin-top: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+th, td { padding: 6px 8px; border-bottom: 1px solid var(--borde); text-align: left; white-space: nowrap; }
+th { color: var(--texto-secundario); font-weight: 600; }
+#tabla-estados th { cursor: pointer; user-select: none; }
+.numero { text-align: right; font-variant-numeric: tabular-nums; }
+.limitaciones-titulo { margin-top: 16px; }
+.limitaciones { padding-left: 18px; }
+
+.tooltip {
+  position: fixed; pointer-events: none; z-index: 10; max-width: 260px;
+  background: var(--fondo-tarjeta); color: var(--texto-principal); border: 1px solid var(--borde);
+  border-radius: 6px; padding: 8px 10px; font-size: 0.8rem; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 600px) {
+  .controles-valor { align-items: flex-start; }
+  .fila-senado { grid-template-columns: 90px 1fr 40px; }
+}
