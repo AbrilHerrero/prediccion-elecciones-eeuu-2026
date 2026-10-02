@@ -1,5 +1,7 @@
 # Fuentes primarias (se descargan de FEC y del Clerk; ver README)
 excelsElecciones/
+excelsMidterms/
+excelPres/
 
 # Entorno y archivos generados por Python
 .venv/

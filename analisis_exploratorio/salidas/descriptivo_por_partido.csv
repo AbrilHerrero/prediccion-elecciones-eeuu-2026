@@ -1,0 +1,5 @@
+,house_dem_share_2p,house_dem_share_2p,house_dem_share_2p,house_dem_swing,house_dem_swing,house_dem_swing,president_party_swing,president_party_swing,president_party_swing
+,mean,median,std,mean,median,std,mean,median,std
+pres_party,,,,,,,,,
+D,0.4525,0.445,0.1225,-0.0507,-0.0457,0.0708,-0.0507,-0.0457,0.0708
+R,0.5253,0.5195,0.1132,0.06,0.0574,0.061,-0.06,-0.0574,0.061

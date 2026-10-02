@@ -1,9 +1,9 @@
 ,todos,solo disputados,diferencia
-Medio término (0/1),0.0393,0.0694,0.0302
-Roll-off Cámara,0.1089,0.3734,0.2645
-Cuota D internas,0.7318,0.6885,-0.0432
-Cuota D Senado,0.7984,0.8232,0.0249
-Proporción de bancas D,0.8406,0.8984,0.0579
-Cuota D Cámara (ciclo anterior),0.8667,0.9012,0.0345
-Cuota D Presidente (elección anterior),0.8838,0.9468,0.063
-Cuota D Presidente (mismo año),0.9063,0.9682,0.0619
+Swing del partido del presidente,0.0807,0.0678,-0.0129
+Roll-off Cámara (presidencial anterior),-0.0054,0.1108,0.1162
+Cuota del partido del presidente en la Cámara (presidencial anterior),0.209,0.1623,-0.0468
+Cuota D internas,0.5803,0.5073,-0.073
+Cuota D Senado (mismo día),0.701,0.6844,-0.0166
+Cuota D Cámara (presidencial anterior),0.7928,0.7686,-0.0242
+Proporción de bancas D (presidencial anterior),0.7527,0.7778,0.0251
+Cuota D Presidente (presidencial anterior),0.7603,0.7826,0.0223

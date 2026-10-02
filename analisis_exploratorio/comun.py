@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 CARPETA = Path(__file__).parent
-DATASET = CARPETA.parent / "dataset_elecciones_estado.csv"
+DATASET = CARPETA.parent / "dataset_midterms.csv"
 FIGURAS = CARPETA / "figuras"
 SALIDAS = CARPETA / "salidas"
 PREPROCESADO = SALIDAS / "dataset_preprocesado.csv"
@@ -20,8 +20,8 @@ SALIDAS.mkdir(exist_ok=True)
 # Colores (paleta validada para daltonismo). Partido: convención azul D / rojo R.
 AZUL_D = "#2a78d6"
 ROJO_R = "#e34948"
-VIOLETA = "#4a3aa7"   # medio término / subconjunto destacado
-GRIS = "#898781"      # año presidencial / referencia
+VIOLETA = "#4a3aa7"   # subconjunto o período destacado
+GRIS = "#898781"      # referencia / resto de los datos
 GRIS_NEUTRO = "#f0efec"
 TINTA = "#0b0b0b"
 TINTA_2 = "#52514e"
@@ -35,17 +35,17 @@ DIVERGENTE = matplotlib.colors.LinearSegmentedColormap.from_list(
 # Etiquetas legibles para las variables que se grafican
 ETIQUETAS = {
     "house_dem_share_2p": "Cuota D Cámara",
-    "house_dem_share_2p_lag": "Cuota D Cámara (ciclo anterior)",
-    "pres_dem_share_2p": "Cuota D Presidente (mismo año)",
-    "pres_dem_share_2p_prev": "Cuota D Presidente (elección anterior)",
-    "senate_dem_share_2p": "Cuota D Senado",
+    "house_dem_share_2p_prev": "Cuota D Cámara (presidencial anterior)",
+    "pres_dem_share_2p_prev": "Cuota D Presidente (presidencial anterior)",
+    "house_seat_share_d_prev": "Proporción de bancas D (presidencial anterior)",
     "house_primary_dem_share_2p": "Cuota D internas",
-    "house_seat_share_d": "Proporción de bancas D",
     "house_contested_share": "Distritos disputados D vs R",
-    "house_dropoff": "Roll-off Cámara",
-    "is_midterm": "Medio término (0/1)",
+    "house_dropoff_prev": "Roll-off Cámara (presidencial anterior)",
+    "senate_dem_share_2p": "Cuota D Senado (mismo día)",
+    "house_seat_share_d": "Proporción de bancas D",
     "house_dem_swing": "Swing D",
-    "swing_partido_presidente": "Swing del partido del presidente",
+    "president_party_swing": "Swing del partido del presidente",
+    "partido_pres_camara_prev": "Cuota del partido del presidente en la Cámara (presidencial anterior)",
 }
 
 
@@ -75,7 +75,7 @@ def estilo():
 
 
 def cargar_dataset():
-    """Devuelve el dataset completo (filas de entrenamiento y de predicción 2026)."""
+    """Devuelve el dataset completo (filas de entrenamiento 2006–2022 y de predicción 2026)."""
     return pd.read_csv(DATASET)
 
 
