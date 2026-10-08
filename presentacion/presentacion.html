@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Medio término 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fondo: #fcfcfb;
+    --fondo-exterior: #e9e8e3;
+    --superficie: #f4f3ef;
+    --borde: #e1e0d9;
+    --tinta: #0b0b0b;
+    --tinta-2: #52514e;
+    --tinta-3: #898781;
+    --azul-d: #2a78d6;
+    --rojo-r: #e34948;
+    --violeta: #4a3aa7;
+    --violeta-suave: #ecebf7;
+    --ok: #2f7d4f;
+    --ok-suave: #e5f2ea;
+    --aviso: #9a6a00;
+    --aviso-suave: #faf1dc;
+    --ancho: 1280px;
+    --alto: 720px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--fondo-exterior);
+    color: var(--tinta);
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    overflow: hidden;
+  }
+
+  /* ---------- Escenario: cada diapositiva mide 1280 x 720 y se escala a la ventana ---------- */
+  .escenario {
+    position: fixed; inset: 0;
+    display: grid; place-items: center;
+  }
+  .lienzo {
+    width: var(--ancho); height: var(--alto);
+    position: relative;
+    transform-origin: center center;
+  }
+  .slide {
+    position: absolute; inset: 0;
+    background: var(--fondo);
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.12);
+    padding: 56px 72px 64px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .slide.activa { display: flex; }
+
+  /* ---------- Tipografía ---------- */
+  .seccion {
+    font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--violeta); margin-bottom: 10px;
+  }
+  h1 { font-size: 54px; line-height: 1.05; font-weight: 800; letter-spacing: -.02em; }
+  h2 { font-size: 34px; line-height: 1.15; font-weight: 700; letter-spacing: -.01em; margin-bottom: 22px; }
+  h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  p, li { font-size: 19px; line-height: 1.5; color: var(--tinta-2); }
+  li { margin-bottom: 8px; }
+  ul { padding-left: 22px; }
+  strong { color: var(--tinta); font-weight: 600; }
+  code, .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: .85em; }
+  .chico { font-size: 15px; }
+  .nota { font-size: 14px; color: var(--tinta-3); }
+  .d { color: var(--azul-d); font-weight: 600; }
+  .r { color: var(--rojo-r); font-weight: 600; }
+
+  /* ---------- Disposición ---------- */
+  .cuerpo { flex: 1; min-height: 0; display: flex; gap: 40px; }
+  .col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+  .col-2 { flex: 2; }
+  .centro { justify-content: center; }
+  .fig { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+  .fig img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; }
+  .pie { position: absolute; left: 72px; bottom: 22px; font-size: 12px; color: var(--tinta-3); }
+
+  /* ---------- Componentes ---------- */
+  .tarjeta {
+    background: var(--superficie); border: 1px solid var(--borde); border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .tarjeta p, .tarjeta li { font-size: 16px; }
+  .grilla-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grilla-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .cifra { font-size: 64px; font-weight: 800; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .cifra-etiqueta { font-size: 15px; color: var(--tinta-2); margin-top: 8px; line-height: 1.35; }
+  .etiqueta {
+    display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .04em;
+    padding: 3px 9px; border-radius: 999px; margin-bottom: 8px;
+  }
+  .etiqueta.ok { background: var(--ok-suave); color: var(--ok); }
+  .etiqueta.aviso { background: var(--aviso-suave); color: var(--aviso); }
+  .destacado {
+    border-left: 4px solid var(--violeta); background: var(--violeta-suave);
+    padding: 14px 18px; border-radius: 0 8px 8px 0;
+  }
+  .destacado p { color: var(--tinta); font-size: 18px; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
+  th { text-align: left; font-weight: 600; color: var(--tinta-3); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; padding: 8px 10px; border-bottom: 1px solid var(--borde); }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--borde); color: var(--tinta-2); }
+  td.num, th.num { text-align: right; }
+  tr.marca td { background: var(--violeta-suave); color: var(--tinta); font-weight: 600; }
+
+  /* Diagrama: una fila une dos elecciones */
+  .flujo { display: flex; align-items: stretch; gap: 0; }
+  .flujo .caja { flex: 1; border: 1px solid var(--borde); border-radius: 10px; padding: 16px 18px; background: var(--superficie); }
+  .flujo .flecha { display: flex; align-items: center; padding: 0 14px; color: var(--violeta); font-size: 28px; font-weight: 700; }
+  .flujo .caja h3 { font-size: 16px; }
+  .flujo .caja p { font-size: 15px; }
+
+  /* Línea de tiempo del trayecto */
+  .linea { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; position: relative; margin-top: 8px; }
+  .linea::before { content: ""; position: absolute; top: 15px; left: 4%; right: 4%; height: 2px; background: var(--borde); }
+  .hito { position: relative; padding-top: 44px; }
+  .hito::before {
+    content: attr(data-n); position: absolute; top: 0; left: 0;
+    width: 32px; height: 32px; border-radius: 50%; background: var(--violeta); color: #fff;
+    display: grid; place-items: center; font-weight: 700; font-size: 14px;
+  }
+  .hito h3 { font-size: 16px; }
+  .hito p { font-size: 14.5px; line-height: 1.45; }
+
+  /* Validación dejando afuera un año */
+  .pliegues { display: grid; grid-template-columns: 110px repeat(5, 1fr); gap: 6px; font-size: 13px; }
+  .pliegues div { padding: 7px 4px; text-align: center; border-radius: 5px; }
+  .pliegues .cab { color: var(--tinta-3); font-weight: 600; }
+  .pliegues .ent { background: #e8e7e2; color: var(--tinta-2); }
+  .pliegues .val { background: var(--violeta); color: #fff; font-weight: 600; }
+  .pliegues .nom { text-align: left; color: var(--tinta-2); }
+
+  /* Ecuación */
+  .ecuacion {
+    font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 16px; line-height: 1.7;
+    background: var(--superficie); border: 1px solid var(--borde); border-radius: 10px; padding: 16px 20px;
+    color: var(--tinta);
+  }
+
+  /* ---------- Controles ---------- */
+  .progreso { position: fixed; left: 0; top: 0; height: 3px; background: var(--violeta); transition: width .25s; z-index: 5; }
+  .controles {
+    position: fixed; right: 16px; bottom: 14px; display: flex; gap: 8px; align-items: center; z-index: 5;
+    font-size: 13px; color: var(--tinta-2);
+  }
+  .controles button {
+    border: 1px solid var(--borde); background: var(--fondo); color: var(--tinta);
+    width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 16px;
+  }
+  .controles button:hover { background: var(--superficie); }
+  .contador { min-width: 58px; text-align: center; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Impresión: una diapositiva por página (para exportar a PDF) ---------- */
+  @media print {
+    @page { size: 1280px 720px; margin: 0; }
+    body { overflow: visible; background: #fff; }
+    .escenario { position: static; display: block; }
+    .lienzo { transform: none !important; width: 1280px; height: auto; }
+    .slide { display: flex !important; position: relative; width: 1280px; height: 720px; box-shadow: none; border-radius: 0; page-break-after: always; break-after: page; }
+    .controles, .progreso { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="progreso" id="progreso"></div>
+<div class="escenario">
+<div class="lienzo" id="lienzo">
+
+<!-- 1 ─────────────────────────── Portada -->
+<section class="slide" data-titulo="Portada">
+  <div class="col centro" style="flex:1">
+    <div class="seccion">Ciencia de Datos · Trabajo práctico 2026</div>
+    <h1>¿Qué anticipa la elección presidencial<br>sobre el medio término?</h1>
+    <p style="font-size:22px;margin-top:22px;max-width:900px">
+      Predicción de la Cámara de Representantes de EE. UU. para el
+      <strong>3 de noviembre de 2026</strong>, a partir de los resultados oficiales de 2004–2024.
+    </p>
+    <div class="grilla-3" style="margin-top:44px;max-width:940px">
+      <div><div class="cifra" style="font-size:44px">11</div><div class="cifra-etiqueta">elecciones oficiales (FEC y Clerk de la Cámara)</div></div>
+      <div><div class="cifra" style="font-size:44px">250</div><div class="cifra-etiqueta">estado × medio término para aprender (2006–2022)</div></div>
+      <div><div class="cifra" style="font-size:44px">50</div><div class="cifra-etiqueta">estados a predecir en 2026</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 ─────────────────────────── Pregunta e hipótesis -->
+<section class="slide" data-titulo="Pregunta e hipótesis">
+  <div class="seccion">El problema</div>
+  <h2>Pregunta de investigación e hipótesis</h2>
+  <div class="destacado" style="margin-bottom:24px">
+    <p>¿Cuánto anticipa el resultado de la elección presidencial anterior el voto a la Cámara en el
+      medio término siguiente, y cuánto pierde en ella el partido del presidente?</p>
+  </div>
+  <div class="grilla-3">
+    <div class="tarjeta">
+      <h3>H1 · Anticipación</h3>
+      <p>El voto presidencial de cada estado anticipa su voto a la Cámara dos años después.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>H2 · Castigo de medio término</h3>
+      <p>El partido del presidente pierde votos, sea demócrata o republicano.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>H3 · Regresión</h3>
+      <p>Pierde más donde estaba más fuerte: los resultados extremos vuelven hacia el 50 %.</p>
+    </div>
+  </div>
+  <p style="margin-top:26px">Variable objetivo: <code>house_dem_share_2p</code> = votos D / (votos D + votos R) a la Cámara, por estado.</p>
+</section>
+
+<!-- 3 ─────────────────────────── Estado del arte -->
+<section class="slide" data-titulo="Estado del arte">
+  <div class="seccion">Marco teórico</div>
+  <h2>De dónde salen las hipótesis</h2>
+  <div class="grilla-2" style="gap:18px">
+    <div class="tarjeta">
+      <h3>Modelos de fundamentos</h3>
+      <p>Fair (1978), Abramowitz (1988), Tufte (1975): predecir con variables estructurales, sin encuestas.
+        <strong>Nuestro trabajo construye esa capa con resultados electorales.</strong></p>
+    </div>
+    <div class="tarjeta">
+      <h3>Pérdida en medio término → H2</h3>
+      <p><em>Surge and decline</em> (Campbell): sin presidente en la boleta, no van los votantes que arrastró.
+        <em>Balance</em> (Erikson) y <em>referéndum</em> (Tufte).</p>
+    </div>
+    <div class="tarjeta">
+      <h3>Nacionalización → H1</h3>
+      <p>Cae el voto dividido y el valor del legislador en ejercicio (Jacobson; Abramowitz &amp; Webster; Hopkins).
+        El voto a la Cámara se parece cada vez más al presidencial.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>De votos a bancas</h3>
+      <p>Gelman &amp; King (1994): la curva votos-bancas y el sesgo de los mapas. La usamos para pasar de
+        la cuota de voto a bancas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 ─────────────────────────── Dataset -->
+<section class="slide" data-titulo="El dataset">
+  <div class="seccion">Etapa 1 · Datos</div>
+  <h2>Cada fila une dos elecciones del mismo estado</h2>
+  <div class="flujo" style="margin-bottom:24px">
+    <div class="caja">
+      <h3>Presidencial anterior → predictores <code>_prev</code></h3>
+      <p>Voto a Presidente, voto a la Cámara, bancas, distritos disputados. Lo que se sabe <strong>antes</strong> de votar.</p>
+    </div>
+    <div class="flecha">→</div>
+    <div class="caja">
+      <h3>Medio término → resultado</h3>
+      <p>Cuota D a la Cámara, bancas ganadas y cambio del partido del presidente.</p>
+    </div>
+  </div>
+  <div class="cuerpo" style="gap:28px">
+    <div class="col">
+      <table>
+        <tr><th>Fila</th><th>Presidencial</th><th>Presidente</th><th>Uso</th></tr>
+        <tr><td>2006</td><td>2004</td><td class="r">Bush (R)</td><td>entrenar</td></tr>
+        <tr><td>2010</td><td>2008</td><td class="d">Obama (D)</td><td>entrenar</td></tr>
+        <tr><td>2014</td><td>2012</td><td class="d">Obama (D)</td><td>entrenar</td></tr>
+        <tr><td>2018</td><td>2016</td><td class="r">Trump (R)</td><td>entrenar</td></tr>
+        <tr><td>2022</td><td>2020</td><td class="d">Biden (D)</td><td>entrenar</td></tr>
+        <tr class="marca"><td>2026</td><td>2024</td><td>Trump (R)</td><td>predecir</td></tr>
+      </table>
+    </div>
+    <div class="col">
+      <ul>
+        <li><strong>50 estados × 6 años = 300 filas × 42 columnas.</strong> Panel: mismas unidades en el tiempo.</li>
+        <li><strong>Fuentes oficiales:</strong> FEC (2004–2022, presidencial 2024) y Clerk de la Cámara (2024).</li>
+        <li><strong>Estado y no distrito:</strong> las fronteras no cambian con cada redistribución.</li>
+        <li>Proporciones, no votos absolutos: los estados tienen tamaños muy distintos.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 5 ─────────────────────────── Trayecto -->
+<section class="slide" data-titulo="El trayecto">
+  <div class="seccion">Cómo llegamos</div>
+  <h2>El trayecto del proyecto</h2>
+  <div class="linea">
+    <div class="hito" data-n="1">
+      <h3>Primer dataset</h3>
+      <p>Panel 2016–2026 por ciclo. Solo <strong>2 medio término</strong>: el efecto se podía describir, no estimar.</p>
+    </div>
+    <div class="hito" data-n="2">
+      <h3>Rediseño</h3>
+      <p>Filas = medio término 2006–2022, predictores de la presidencial anterior. <strong>5 medio término</strong>, presidentes de ambos partidos.</p>
+    </div>
+    <div class="hito" data-n="3">
+      <h3>Validación</h3>
+      <p>435 distritos y bancas oficiales en las 11 elecciones. Encontró <strong>errores en las fuentes</strong> que corregimos.</p>
+    </div>
+    <div class="hito" data-n="4">
+      <h3>Exploratorio</h3>
+      <p>Preprocesamiento, descriptivo y correlaciones. Generó las hipótesis y una <strong>línea base de 4,3 pp</strong>.</p>
+    </div>
+    <div class="hito" data-n="5">
+      <h3>Predictivo</h3>
+      <p>Modelos validados dejando afuera cada año, contraste de H1–H3 y <strong>predicción 2026</strong>.</p>
+    </div>
+  </div>
+  <div class="tarjeta" style="margin-top:34px">
+    <h3>Lo que encontró la validación en las fuentes del FEC</h3>
+    <div class="grilla-2" style="gap:6px 30px">
+      <p class="chico">• Luisiana: sumaba primera vuelta y balotaje (votantes contados dos veces).</p>
+      <p class="chico">• Nevada 2014: votos republicanos y de otros partidos intercambiados.</p>
+      <p class="chico">• Etiquetas de partido por época: <code>DFL</code>, <code>DNL</code>, <code>GOP</code>, <code>D(UND)</code>.</p>
+      <p class="chico">• Filas de fusión duplicadas (NY 2004) y voto preferencial de Maine.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 ─────────────────────────── Preprocesamiento -->
+<section class="slide" data-titulo="Preprocesamiento">
+  <div class="seccion">Etapa 2 · Preprocesamiento</div>
+  <h2>Faltantes con explicación y atípicos reales</h2>
+  <div class="cuerpo">
+    <div class="col">
+      <div class="fig"><img src="../analisis_exploratorio/figuras/02_1_mapa_faltantes.png" alt="Mapa de datos faltantes por columna y año"></div>
+      <p class="chico"><strong>Estructurales:</strong> el Senado no se elige en todos los estados. <strong>Reales:</strong> internas que no existen (Luisiana, convenciones). Los predictores <code>_prev</code> están completos. No se imputa.</p>
+    </div>
+    <div class="col">
+      <div class="fig"><img src="../analisis_exploratorio/figuras/02_2_boxplot_atipicos.png" alt="Boxplot de la cuota D por año con atípicos"></div>
+      <p class="chico">Los atípicos (MA, RI, ND, SD) son estados donde un partido <strong>no presentó candidato</strong>. Son reales: se conservan y se marca <code>todos_disputados</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 ─────────────────────────── Descriptivo -->
+<section class="slide" data-titulo="Descriptivo">
+  <div class="seccion">Etapa 2 · Descriptivo — ¿qué pasó?</div>
+  <h2>El partido del presidente perdió bancas las cinco veces</h2>
+  <div class="cuerpo">
+    <div class="col col-2"><div class="fig"><img src="../analisis_exploratorio/figuras/03_1_bancas_antes_despues.png" alt="Bancas antes y después de cada medio término"></div></div>
+    <div class="col centro">
+      <table>
+        <tr><th>Año</th><th>Pres.</th><th class="num">Bancas perdidas</th></tr>
+        <tr><td>2006</td><td class="r">R</td><td class="num">30</td></tr>
+        <tr><td>2010</td><td class="d">D</td><td class="num">64</td></tr>
+        <tr><td>2014</td><td class="d">D</td><td class="num">13</td></tr>
+        <tr><td>2018</td><td class="r">R</td><td class="num">42</td></tr>
+        <tr><td>2022</td><td class="d">D</td><td class="num">9</td></tr>
+      </table>
+      <p class="chico">Con presidentes de los dos partidos. El tamaño de la pérdida varía mucho: esa es la "ola nacional".</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 ─────────────────────────── Distribuciones -->
+<section class="slide" data-titulo="Distribuciones">
+  <div class="seccion">Etapa 2 · Exploratorio — ¿hay patrones?</div>
+  <h2>Pocos estados competitivos y un swing casi siempre negativo</h2>
+  <div class="cuerpo">
+    <div class="col col-2"><div class="fig"><img src="../analisis_exploratorio/figuras/04_1_histogramas.png" alt="Histogramas de la cuota D y del swing del partido del presidente"></div></div>
+    <div class="col centro">
+      <div><div class="cifra">11 %</div><div class="cifra-etiqueta">de los estado-año son competitivos (48–52 %): 27 de 250</div></div>
+      <div><div class="cifra">86 %</div><div class="cifra-etiqueta">de los estado-año el partido del presidente pierde votos</div></div>
+      <p class="chico">La cuota D es simétrica (media ≈ mediana). El desbalance avisa que el modelo tiene pocos ejemplos justo donde se decide la mayoría.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 9 ─────────────────────────── Dispersión -->
+<section class="slide" data-titulo="Correlaciones X vs Y">
+  <div class="seccion">Correlaciones · 1</div>
+  <h2>La presidencial anterior se mueve junto con el medio término</h2>
+  <div class="cuerpo">
+    <div class="col"><div class="fig"><img src="../analisis_exploratorio/figuras/04_3_dispersion_predictores.png" alt="Dispersión de cuatro predictores contra la cuota D"></div></div>
+    <div class="col centro">
+      <table>
+        <tr><th>Predictor</th><th class="num">Pearson</th><th class="num">Spearman</th></tr>
+        <tr><td>Cuota D Cámara anterior</td><td class="num">0,79</td><td class="num">0,80</td></tr>
+        <tr class="marca"><td>Cuota D Presidente anterior</td><td class="num">0,76</td><td class="num">0,80</td></tr>
+        <tr><td>Bancas D anteriores</td><td class="num">0,75</td><td class="num">0,77</td></tr>
+        <tr><td>Internas D</td><td class="num">0,58</td><td class="num">0,63</td></tr>
+      </table>
+      <p class="chico">Pearson mide relación lineal; Spearman, monótona por rangos. Que coincidan indica que la relación es aproximadamente lineal y no la generan unos pocos extremos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 ─────────────────────────── Matriz -->
+<section class="slide" data-titulo="Matriz de correlación">
+  <div class="seccion">Correlaciones · 2</div>
+  <h2>Matriz de correlación: qué entra al modelo y qué no</h2>
+  <div class="cuerpo">
+    <div class="col"><div class="fig"><img src="../analisis_exploratorio/figuras/04_4_matriz_correlacion.png" alt="Matriz de correlación de Pearson"></div></div>
+    <div class="col centro">
+      <ul>
+        <li><strong>Los tres predictores <code>_prev</code> correlacionan entre sí</strong> (0,77–0,86): miden lo mismo desde ángulos distintos. Por eso se combinan, no se suman a ciegas.</li>
+        <li><strong>Senado (0,70)</strong>: se vota el mismo día. Es otro resultado, no un predictor.</li>
+        <li><strong>Internas (0,58)</strong>: tienen señal, pero no están para 2026 en estas fuentes.</li>
+        <li><strong>Roll-off (≈ 0)</strong> y <strong>distritos disputados (0,16)</strong>: casi sin relación lineal.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 11 ─────────────────────────── Subconjuntos -->
+<section class="slide" data-titulo="Subconjuntos">
+  <div class="seccion">Correlaciones · 3</div>
+  <h2>Los distritos sin oposición inflan la correlación de la Cámara</h2>
+  <div class="cuerpo">
+    <div class="col col-2"><div class="fig"><img src="../analisis_exploratorio/figuras/04_5_correlacion_subconjuntos.png" alt="Correlaciones en todos los estados y solo en disputados"></div></div>
+    <div class="col centro">
+      <table>
+        <tr><th>Predictor</th><th class="num">Todos</th><th class="num">Disputados</th></tr>
+        <tr><td>Cámara anterior</td><td class="num">0,79</td><td class="num">0,77</td></tr>
+        <tr class="marca"><td>Presidente anterior</td><td class="num">0,76</td><td class="num">0,78</td></tr>
+      </table>
+      <p class="chico">Un estado con un distrito sin rival suele tenerlo en las dos elecciones: la misma distorsión aparece en el predictor y en el resultado. <strong>En los estados disputados, el voto presidencial es el mejor predictor.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 ─────────────────────────── Nacionalización -->
+<section class="slide" data-titulo="Nacionalización">
+  <div class="seccion">Correlaciones · 4 · H1</div>
+  <h2>La relación se hizo más fuerte con el tiempo</h2>
+  <div class="cuerpo">
+    <div class="col col-2"><div class="fig"><img src="../analisis_exploratorio/figuras/04_6_correlacion_por_anio.png" alt="Correlación por año con la presidencial anterior"></div></div>
+    <div class="col centro">
+      <div><div class="cifra">0,68 → 0,86</div><div class="cifra-etiqueta">r con el voto presidencial anterior: 2006–2014 vs 2018–2022</div></div>
+      <p class="chico">En los estados disputados de 2018 y 2022 llega a <strong>0,97–0,98</strong>. Es la nacionalización del voto medida con nuestros datos: cada vez menos voto dividido.</p>
+      <p class="chico">Para 2026, la relación reciente es la más relevante.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 13 ─────────────────────────── Efecto medio término -->
+<section class="slide" data-titulo="Efecto de medio término">
+  <div class="seccion">Correlaciones · 5 · H2</div>
+  <h2>El partido del presidente pierde votos en los cinco medio término</h2>
+  <div class="cuerpo">
+    <div class="col col-2"><div class="fig"><img src="../analisis_exploratorio/figuras/04_7_efecto_medio_termino.png" alt="Swing del partido del presidente por año"></div></div>
+    <div class="col centro">
+      <table>
+        <tr><th>Año</th><th class="num">Swing mediano</th><th class="num">Estados en que pierde</th></tr>
+        <tr><td>2006 <span class="r">R</span></td><td class="num">−6,5 pp</td><td class="num">96 %</td></tr>
+        <tr><td>2010 <span class="d">D</span></td><td class="num">−8,6 pp</td><td class="num">96 %</td></tr>
+        <tr><td>2014 <span class="d">D</span></td><td class="num">−3,6 pp</td><td class="num">78 %</td></tr>
+        <tr><td>2018 <span class="r">R</span></td><td class="num">−5,2 pp</td><td class="num">90 %</td></tr>
+        <tr><td>2022 <span class="d">D</span></td><td class="num">−1,9 pp</td><td class="num">70 %</td></tr>
+      </table>
+      <p class="chico">El signo nunca cambia; el tamaño sí. Por eso el modelo mide todo desde el <strong>partido del presidente</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 14 ─────────────────────────── Swing vs previo -->
+<section class="slide" data-titulo="Dónde pierde más">
+  <div class="seccion">Correlaciones · 6 · H3</div>
+  <h2>Pierde más donde estaba más fuerte</h2>
+  <div class="cuerpo">
+    <div class="col"><div class="fig"><img src="../analisis_exploratorio/figuras/04_8_swing_vs_resultado_previo.png" alt="Swing del partido del presidente contra su cuota previa"></div></div>
+    <div class="col centro">
+      <div><div class="cifra">r = −0,52</div><div class="cifra-etiqueta">entre la cuota previa del partido del presidente en la Cámara y su swing (−0,66 en disputados)</div></div>
+      <p class="chico">Consistente con <em>surge and decline</em> (se van los votantes que arrastró la presidencial) y con <strong>regresión a la media</strong>.</p>
+      <p class="chico">Conclusión para el modelo: el castigo no es igual en todos los estados.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 15 ─────────────────────────── Resumen de correlaciones -->
+<section class="slide" data-titulo="Resumen de correlaciones">
+  <div class="seccion">Síntesis del exploratorio</div>
+  <h2>Las correlaciones que encontramos y qué hicimos con cada una</h2>
+  <table>
+    <tr><th>Relación</th><th class="num">r</th><th>Lectura</th><th>Decisión para el modelo</th></tr>
+    <tr><td>Presidente anterior ↔ Cámara medio término</td><td class="num">0,76</td><td>Fuerte y limpia</td><td>Predictor principal (H1)</td></tr>
+    <tr><td>Cámara anterior ↔ Cámara medio término</td><td class="num">0,79</td><td>Inflada por distritos sin rival</td><td>Predictor, junto con el presidencial</td></tr>
+    <tr><td>Bancas D anteriores ↔ Cámara</td><td class="num">0,75</td><td>Redundante con las cuotas</td><td>Se incluye, peso chico</td></tr>
+    <tr><td>Presidente anterior, por período</td><td class="num">0,68 → 0,86</td><td>Nacionalización</td><td>Usar presidentes de ambas épocas</td></tr>
+    <tr><td>Cuota previa del partido del pres. ↔ su swing</td><td class="num">−0,52</td><td>Regresión a la media</td><td>Pendiente &lt; 1 (H3)</td></tr>
+    <tr><td>Senado mismo día ↔ Cámara</td><td class="num">0,70</td><td>Simultáneo</td><td>Excluido: no se conoce antes</td></tr>
+    <tr><td>Internas D ↔ Cámara</td><td class="num">0,58</td><td>Señal moderada</td><td>Excluido: no hay datos 2026</td></tr>
+    <tr><td>Roll-off / distritos disputados ↔ Cámara</td><td class="num">≈ 0 / 0,16</td><td>Sin relación lineal</td><td>Solo como control</td></tr>
+  </table>
+  <p class="nota" style="margin-top:14px">Correlación no implica causalidad: estas relaciones eligen variables, no prueban causas.</p>
+</section>
+
+<!-- 16 ─────────────────────────── Líneas base -->
+<section class="slide" data-titulo="Líneas base">
+  <div class="seccion">El listón a superar</div>
+  <h2>Antes de modelar: ¿cuánto erra una regla simple?</h2>
+  <div class="cuerpo">
+    <div class="col col-2 centro">
+      <table>
+        <tr><th>Regla ingenua</th><th class="num">Error medio por estado</th></tr>
+        <tr><td>Repetir la Cámara de la presidencial anterior</td><td class="num">6,56 pp</td></tr>
+        <tr><td>Usar el voto presidencial anterior</td><td class="num">6,00 pp</td></tr>
+        <tr><td>Cámara anterior + castigo medio de los otros años</td><td class="num">4,75 pp</td></tr>
+        <tr class="marca"><td>Presidencial anterior + castigo medio de los otros años</td><td class="num">4,31 pp</td></tr>
+        <tr><td>Swing uniforme con el cambio nacional real (trampa: usa el futuro)</td><td class="num">3,81 pp</td></tr>
+      </table>
+    </div>
+    <div class="col centro">
+      <div class="destacado"><p>Un modelo que no baje de <strong>4,3 pp</strong> no aporta nada sobre "presidencial anterior más castigo promedio".</p></div>
+      <p class="chico">El castigo de cada año se calcula con los <strong>otros cuatro</strong>: no se usa información que no se conocía antes de votar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 17 ─────────────────────────── Diseño del modelo -->
+<section class="slide" data-titulo="Diseño del modelo">
+  <div class="seccion">Etapa 3 · Predictivo — ¿qué va a pasar?</div>
+  <h2>Tres decisiones de diseño</h2>
+  <div class="cuerpo">
+    <div class="col">
+      <div class="tarjeta">
+        <h3>1 · Todo desde el partido del presidente</h3>
+        <p>Si es D se usa la cuota D; si es R, 1 − cuota D. Así el mismo modelo aprende el castigo con presidentes de los dos partidos. Centramos en 0,5: <strong>el intercepto es el castigo en un estado parejo</strong>.</p>
+      </div>
+      <div class="tarjeta">
+        <h3>2 · Solo lo que se sabe antes de votar</h3>
+        <p>Predictores <code>_prev</code> de la presidencial anterior, disponibles también para 2026. Senado e internas quedan afuera.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="tarjeta">
+        <h3>3 · Validar dejando afuera un medio término entero</h3>
+        <p style="margin-bottom:12px">Las 50 filas de un año comparten la ola nacional: no son independientes. Mezclarlas al azar filtraría información de la ola.</p>
+        <div class="pliegues">
+          <div class="cab"></div><div class="cab">2006</div><div class="cab">2010</div><div class="cab">2014</div><div class="cab">2018</div><div class="cab">2022</div>
+          <div class="nom">Pliegue 1</div><div class="val">prueba</div><div class="ent">entrena</div><div class="ent">entrena</div><div class="ent">entrena</div><div class="ent">entrena</div>
+          <div class="nom">Pliegue 2</div><div class="ent">entrena</div><div class="val">prueba</div><div class="ent">entrena</div><div class="ent">entrena</div><div class="ent">entrena</div>
+          <div class="nom">Pliegue 3</div><div class="ent">entrena</div><div class="ent">entrena</div><div class="val">prueba</div><div class="ent">entrena</div><div class="ent">entrena</div>
+          <div class="nom">Pliegue 4</div><div class="ent">entrena</div><div class="ent">entrena</div><div class="ent">entrena</div><div class="val">prueba</div><div class="ent">entrena</div>
+          <div class="nom">Pliegue 5</div><div class="ent">entrena</div><div class="ent">entrena</div><div class="ent">entrena</div><div class="ent">entrena</div><div class="val">prueba</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 ─────────────────────────── Comparación de modelos -->
+<section class="slide" data-titulo="Comparación de modelos">
+  <div class="seccion">Etapa 3 · Selección</div>
+  <h2>Cinco modelos contra las líneas base</h2>
+  <div class="cuerpo">
+    <div class="col col-2"><div class="fig"><img src="../analisis_exploratorio/figuras/05_1_comparacion_modelos.png" alt="Error de cada modelo fuera de muestra"></div></div>
+    <div class="col centro">
+      <div><div class="cifra">3,5 pp</div><div class="cifra-etiqueta">error medio por estado del modelo elegido (línea base: 4,3 pp)</div></div>
+      <p class="chico"><strong>Regla de un error estándar:</strong> el modelo con sesgo partidario erra 0,11 pp menos, pero esa diferencia está dentro del error de estimación y suma un parámetro estimado con solo 5 olas. Elegimos el más simple.</p>
+      <p class="chico">El <strong>bosque aleatorio</strong> no supera a la regresión lineal: con 250 filas y relaciones casi lineales, la flexibilidad extra no paga.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 19 ─────────────────────────── Contraste de hipótesis -->
+<section class="slide" data-titulo="Contraste de hipótesis">
+  <div class="seccion">Etapa 3 · Hipótesis</div>
+  <h2>Las tres hipótesis se sostienen al sacar cualquier año</h2>
+  <div class="fig" style="flex:0 0 300px"><img src="../analisis_exploratorio/figuras/05_4_coeficientes_por_pliegue.png" alt="Coeficientes en cada pliegue"></div>
+  <div class="grilla-3" style="margin-top:18px">
+    <div class="tarjeta">
+      <span class="etiqueta ok">H1 · SE SOSTIENE</span>
+      <p>Pendiente ≈ 1 (0,93–1,04) sobre el voto presidencial: un punto más en la presidencial es un punto más en el medio término.</p>
+    </div>
+    <div class="tarjeta">
+      <span class="etiqueta ok">H2 · SE SOSTIENE</span>
+      <p>Castigo de <strong>−4,6 a −5,5 pp</strong> en un estado parejo, en los cinco pliegues.</p>
+    </div>
+    <div class="tarjeta">
+      <span class="etiqueta aviso">H3 · SE SOSTIENE, CON MATIZ</span>
+      <p>Pendiente 0,70–0,80 sobre el <strong>voto a la Cámara</strong>, pero ≈ 1 sobre el presidencial: lo que regresa es el voto a la Cámara hacia la base presidencial.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 20 ─────────────────────────── Modelo elegido -->
+<section class="slide" data-titulo="Modelo elegido">
+  <div class="seccion">Etapa 3 · El modelo</div>
+  <h2>Regresión lineal múltiple con contexto nacional</h2>
+  <div class="ecuacion" style="margin-bottom:22px">
+    cuota partido pres. − 0,5 = <strong>−0,066</strong><br>
+    &nbsp;&nbsp;+ 0,39 · (presidencial previa − 0,5) &nbsp;&nbsp;+ 0,42 · (Cámara previa − 0,5)<br>
+    &nbsp;&nbsp;+ 0,06 · (bancas previas − 0,5) &nbsp;&nbsp;+ 0,03 · distritos disputados previos<br>
+    &nbsp;&nbsp;<strong>− 0,81</strong> · (cuota nacional previa del partido del pres. − 0,5)
+  </div>
+  <div class="grilla-3">
+    <div class="tarjeta"><h3>Presidencial + Cámara</h3><p>Se reparten el peso (0,39 + 0,42 ≈ 0,8): combinar las dos medidas compensa la distorsión de los distritos sin rival.</p></div>
+    <div class="tarjeta"><h3>Contexto nacional</h3><p>Cuanto mejor le fue al partido del presidente en todo el país, más pierde después: <em>surge and decline</em> a escala nacional.</p></div>
+    <div class="tarjeta"><h3>Para 2026</h3><p>R sacó 51,3 % nacional en 2024: el término nacional suma ~1 pp de castigo extra a los republicanos.</p></div>
+  </div>
+</section>
+
+<!-- 21 ─────────────────────────── Diagnóstico -->
+<section class="slide" data-titulo="Diagnóstico">
+  <div class="seccion">Etapa 3 · Diagnóstico</div>
+  <h2>¿Dónde se equivoca?</h2>
+  <div class="cuerpo">
+    <div class="col"><div class="fig"><img src="../analisis_exploratorio/figuras/05_2_predicho_vs_real.png" alt="Predicho contra real fuera de muestra"></div></div>
+    <div class="col">
+      <div class="fig"><img src="../analisis_exploratorio/figuras/05_3_error_nacional_por_anio.png" alt="Error nacional por año"></div>
+      <ul class="chico" style="padding-left:18px">
+        <li class="chico"><strong>R² = 0,82</strong> fuera de muestra; acierta qué partido gana el voto del estado en el <strong>92 %</strong>.</li>
+        <li class="chico">Los peores casos son estados sin oposición (puntos grises).</li>
+        <li class="chico">El error nacional es chico (1–2 pp) pero <strong>siempre subestima al D</strong>: si se repite, 2026 sería aún más demócrata.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 22 ─────────────────────────── Votos a bancas -->
+<section class="slide" data-titulo="De votos a bancas">
+  <div class="seccion">Etapa 3 · Bancas</div>
+  <h2>De votos a bancas</h2>
+  <div class="cuerpo">
+    <div class="col col-2"><div class="fig"><img src="../analisis_exploratorio/figuras/05_7_curva_votos_bancas.png" alt="Curva votos-bancas nacional 2004-2024"></div></div>
+    <div class="col centro">
+      <div><div class="cifra">6,3</div><div class="cifra-etiqueta">bancas por cada punto de voto nacional</div></div>
+      <div><div class="cifra">51,1 %</div><div class="cifra-etiqueta">cuota D que hace falta para 218 bancas</div></div>
+      <p class="chico">Recta sobre las 11 elecciones 2004–2024, con error de ±11 bancas. Probamos primero una curva por estado: exageraba las olas y erraba hasta 20 bancas, así que la descartamos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 23 ─────────────────────────── Predicción 2026 -->
+<section class="slide" data-titulo="Predicción 2026">
+  <div class="seccion">Resultado</div>
+  <h2>Predicción para el 3 de noviembre de 2026</h2>
+  <div class="cuerpo">
+    <div class="col centro" style="flex:0 0 360px;gap:26px">
+      <div><div class="cifra d">54,0 %</div><div class="cifra-etiqueta">voto D bipartidista a la Cámara<br>(p10–p90: 51,7–56,2 %; 2024: 48,7 %)</div></div>
+      <div><div class="cifra d">236</div><div class="cifra-etiqueta">bancas demócratas (p10–p90: 217–256; 2024: 215)</div></div>
+      <div><div class="cifra">88 %</div><div class="cifra-etiqueta">de las 10.000 simulaciones con mayoría D</div></div>
+    </div>
+    <div class="col"><div class="fig"><img src="../analisis_exploratorio/figuras/05_6_bancas_2026.png" alt="Distribución simulada de bancas demócratas en 2026"></div>
+      <p class="chico">La simulación suma tres errores medidos fuera de muestra: la ola nacional (±1,4 pp), el desvío de cada estado (±4,9 pp) y la curva votos-bancas (±11 bancas).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 24 ─────────────────────────── Por estado -->
+<section class="slide" data-titulo="Por estado">
+  <div class="seccion">Resultado por estado</div>
+  <h2>46 de 50 estados se mueven hacia los demócratas</h2>
+  <div class="cuerpo">
+    <div class="col"><div class="fig"><img src="../analisis_exploratorio/figuras/05_5_prediccion_2026_estados.png" alt="Predicción 2026 por estado"></div></div>
+    <div class="col centro">
+      <h3>Siete estados pasan a cuota D &gt; 50 %</h3>
+      <table>
+        <tr><th>Estado</th><th class="num">Bancas</th><th class="num">2024</th><th class="num">2026</th></tr>
+        <tr><td>Michigan</td><td class="num">13</td><td class="num">49,4 %</td><td class="num">53,6 %</td></tr>
+        <tr><td>Pensilvania</td><td class="num">17</td><td class="num">49,0 %</td><td class="num">53,3 %</td></tr>
+        <tr><td>Nevada</td><td class="num">4</td><td class="num">43,5 %</td><td class="num">53,3 %</td></tr>
+        <tr><td>Wisconsin</td><td class="num">8</td><td class="num">48,5 %</td><td class="num">52,1 %</td></tr>
+        <tr><td>Georgia</td><td class="num">14</td><td class="num">47,4 %</td><td class="num">52,0 %</td></tr>
+        <tr><td>Arizona</td><td class="num">9</td><td class="num">48,0 %</td><td class="num">51,5 %</td></tr>
+        <tr><td>Carolina del Norte</td><td class="num">14</td><td class="num">44,8 %</td><td class="num">50,8 %</td></tr>
+      </table>
+      <p class="chico">Son los estados "bisagra" de las presidenciales. Los que bajan (VT, MA) tenían distritos sin candidato R en 2024.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 25 ─────────────────────────── Limitaciones -->
+<section class="slide" data-titulo="Limitaciones">
+  <div class="seccion">Con qué cuidado leerlo</div>
+  <h2>Limitaciones</h2>
+  <div class="grilla-2" style="gap:16px">
+    <div class="tarjeta"><h3>Cinco olas</h3><p>Hay 250 filas, pero la ola nacional se observa solo 5 veces. El intervalo de incertidumbre es orientativo.</p></div>
+    <div class="tarjeta"><h3>Solo fundamentos electorales</h3><p>Sin encuestas, aprobación presidencial ni economía, que explican el tamaño de cada ola.</p></div>
+    <div class="tarjeta"><h3>Mapas 2025–2026</h3><p>Texas, California, Missouri, Carolina del Norte, Ohio y Utah redibujaron distritos. Cambian la curva votos-bancas, no la cuota de voto.</p></div>
+    <div class="tarjeta"><h3>Distritos sin oposición</h3><p>Distorsionan la cuota del estado y son los peores errores. Para 2026 todavía no sabemos cuáles habrá.</p></div>
+  </div>
+  <p class="nota" style="margin-top:18px">Además: falacia ecológica (las correlaciones son entre estados, no entre votantes) y sistemas especiales (top-two en CA y WA, voto preferencial en ME y AK).</p>
+</section>
+
+<!-- 26 ─────────────────────────── Conclusiones -->
+<section class="slide" data-titulo="Conclusiones">
+  <div class="seccion">Cierre</div>
+  <h2>Conclusiones</h2>
+  <div class="cuerpo">
+    <div class="col col-2">
+      <ul>
+        <li><strong>La presidencial anterior anticipa el medio término</strong> (r = 0,76, y 0,86 en los años recientes), y la relación es casi uno a uno.</li>
+        <li><strong>El partido del presidente pierde</strong>: unos 5 pp en un estado parejo, con presidentes de los dos partidos.</li>
+        <li><strong>El voto a la Cámara vuelve hacia el 50 %</strong>, y más cuanto mejor le había ido al partido del presidente en todo el país.</li>
+        <li>Un modelo lineal simple, bien validado, <strong>baja el error de 4,3 a 3,5 pp</strong>. Un modelo más complejo no lo mejora.</li>
+        <li>Para 2026: <strong class="d">54 % D, ~236 bancas, mayoría D en el 88 % de las simulaciones.</strong></li>
+      </ul>
+    </div>
+    <div class="col centro">
+      <div class="tarjeta">
+        <h3>Próximos pasos</h3>
+        <ul class="chico" style="padding-left:18px">
+          <li class="chico">Sumar encuestas genéricas y aprobación presidencial para estimar la ola.</li>
+          <li class="chico">Pasar a nivel distrito con los mapas 2026.</li>
+          <li class="chico">Comparar con el resultado real el 3 de noviembre.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+
+<div class="controles">
+  <button id="anterior" aria-label="Diapositiva anterior">‹</button>
+  <span class="contador" id="contador">1 / 1</span>
+  <button id="siguiente" aria-label="Diapositiva siguiente">›</button>
+</div>
+
+<script>
+  const slides = [...document.querySelectorAll(".slide")];
+  const lienzo = document.getElementById("lienzo");
+  const contador = document.getElementById("contador");
+  const progreso = document.getElementById("progreso");
+  let actual = 0;
+
+  function mostrar(n) {
+    actual = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, i) => s.classList.toggle("activa", i === actual));
+    contador.textContent = `${actual + 1} / ${slides.length}`;
+    progreso.style.width = `${((actual + 1) / slides.length) * 100}%`;
+    history.replaceState(null, "", `#${actual + 1}`);
+    document.title = `${actual + 1}. ${slides[actual].dataset.titulo} · Medio término 2026`;
+  }
+
+  function escalar() {
+    const margen = 24;
+    const escala = Math.min((innerWidth - margen) / 1280, (innerHeight - margen) / 720);
+    lienzo.style.transform = `scale(${escala})`;
+  }
+
+  document.getElementById("anterior").onclick = () => mostrar(actual - 1);
+  document.getElementById("siguiente").onclick = () => mostrar(actual + 1);
+  addEventListener("keydown", (e) => {
+    if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); mostrar(actual + 1); }
+    if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); mostrar(actual - 1); }
+    if (e.key === "Home") mostrar(0);
+    if (e.key === "End") mostrar(slides.length - 1);
+    if (e.key === "f") document.documentElement.requestFullscreen?.();
+  });
+  addEventListener("resize", escalar);
+
+  escalar();
+  mostrar((parseInt(location.hash.slice(1), 10) || 1) - 1);
+</script>
+</body>
+</html>

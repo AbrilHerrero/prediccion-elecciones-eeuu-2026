@@ -47,7 +47,7 @@ for barra, izq in zip(barras, bordes[:-1]):
     barra.set_facecolor(VIOLETA if izq < 0 else GRIS)        # violeta: el partido del presidente pierde
 ax.axvline(0, color=TINTA, linewidth=1, linestyle="--")
 ax.axvline(sw.median(), color=TINTA_2, linewidth=2, linestyle=":", label=f"mediana {sw.median():+.3f}")
-ax.set_xlabel("Cambio en la cuota del partido del presidente vs la presidencial anterior")
+ax.set_xlabel("Cambio en la cuota del partido del presidente\nvs la presidencial anterior")
 ax.set_ylabel("Estado-año (frecuencia)")
 ax.legend()
 ax.set_title("Swing del partido del presidente")

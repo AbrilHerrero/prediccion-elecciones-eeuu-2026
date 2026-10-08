@@ -10,7 +10,8 @@ El trabajo sigue el ciclo de vida de un proyecto de ciencia de datos visto en cl
 |---|---|---|
 | 1. Definición del problema, fuentes y construcción del dataset | ✅ Completa | [`fundamentacion_dataset.md`](fundamentacion_dataset.md), [`construir_dataset_midterms.py`](construir_dataset_midterms.py) |
 | 2. Preprocesamiento y análisis descriptivo y exploratorio (correlaciones) | ✅ Completa | [`analisis_exploratorio/`](analisis_exploratorio/) |
-| 3. Modelo predictivo y estimación de bancas para 2026 | ⏳ Próxima etapa | — |
+| 3. Modelo predictivo y estimación de bancas para 2026 | ✅ Completa | [`analisis_exploratorio/05_predictivo.py`](analisis_exploratorio/05_predictivo.py) |
+| 4. Presentación | ✅ Completa | [`presentacion/`](presentacion/) |
 
 ## Pregunta de investigación
 
@@ -60,10 +61,14 @@ dataset columna por columna, ver el [`GLOSARIO.md`](GLOSARIO.md).
     ├── 02_preprocesamiento.py      # Módulo I: limpieza, integración, reducción, discretización
     ├── 03_descriptivo.py           # Módulo II: ¿qué pasó?
     ├── 04_exploratorio.py          # Módulo II: ¿hay patrones? (correlaciones)
+    ├── 05_predictivo.py            # Módulo III: hipótesis, modelos y predicción 2026
     ├── ejecutar_todo.py
     ├── comun.py
     ├── figuras/                    # gráficos generados (PNG)
     └── salidas/                    # tablas generadas (CSV)
+presentacion/
+├── presentacion.html               # diapositivas (abrir en el navegador)
+└── guion.md                        # qué decir en cada diapositiva
 ```
 
 ## Cómo reproducirlo
@@ -102,11 +107,17 @@ raíz del repositorio y ejecutá `.venv/bin/python construir_dataset_midterms.py
 4. **Línea base:** voto presidencial anterior + castigo promedio de los otros medio término da un
    error medio de 4,3 pp por estado. Un modelo tiene que superar eso.
 
-Para 2026, con presidente republicano, estos patrones apuntan a un desplazamiento hacia los
-demócratas. Correlación no implica causalidad: estos resultados orientan la elección de variables
-para el modelo predictivo de la próxima etapa.
+## Resultados del modelo predictivo
+
+Regresión lineal sobre los predictores `_prev`, evaluada dejando afuera un medio término por vez:
+
+- Error medio de **3,5 pp** por estado fuera de muestra (línea base: 4,3 pp).
+- Las tres hipótesis se sostienen en los cinco pliegues: la presidencial anticipa, el partido del
+  presidente pierde ~5 pp en un estado parejo y el voto a la Cámara vuelve hacia el 50 %.
+- **2026:** 54,0 % D del voto bipartidista y **236 bancas D** (p10–p90: 217–256); mayoría D en el
+  88 % de las simulaciones. Solo fundamentos electorales: sin encuestas ni mapas 2025–2026.
 
 ## Tecnologías
 
-Python 3.9, pandas, matplotlib, openpyxl y xlrd (lectura de Excel `.xlsx` y `.xls`) y pdfplumber
+Python 3.9, pandas, matplotlib, scikit-learn, openpyxl y xlrd (lectura de Excel `.xlsx` y `.xls`) y pdfplumber
 (lectura del PDF del Clerk).

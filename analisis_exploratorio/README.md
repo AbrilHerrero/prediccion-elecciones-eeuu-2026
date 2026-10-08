@@ -1,4 +1,4 @@
-# Análisis exploratorio — Elecciones de medio término 2006–2022
+# Análisis exploratorio y predictivo — Elecciones de medio término 2006–2022
 
 Scripts en Python + pandas + matplotlib que procesan `../dataset_midterms.csv` y generan
 gráficos y tablas para estudiar qué información de la presidencial anterior anticipa el voto en
@@ -11,7 +11,8 @@ Análisis*):
 | `02_preprocesamiento.py` | **Módulo I** — Limpieza, integración, reducción, discretización | Faltantes (estructurales vs reales), columnas redundantes, atípicos (1,5 × IQR), controles de consistencia, variables derivadas y discretización de la cuota D en 5 categorías |
 | `03_descriptivo.py` | **Módulo II · Nivel 1** — Descriptivo (¿qué pasó?) | Media, mediana, desvío; comparación por partido del presidente; bancas y voto nacional antes y después de cada medio término |
 | `04_exploratorio.py` | **Módulo II · Nivel 2** — Exploratorio (¿hay patrones?) | Histogramas, desbalance de categorías, dispersión X/Y con r de Pearson, matriz de correlación, subconjuntos, correlaciones por año, efecto de medio término y líneas base |
-| `ejecutar_todo.py` | — | Corre los cuatro pasos en orden |
+| `05_predictivo.py` | **Módulo III** — Predictivo (¿qué va a pasar?) | Contraste de hipótesis, validación dejando afuera un medio término, comparación de modelos, curva votos-bancas, predicción 2026 y simulación de incertidumbre |
+| `ejecutar_todo.py` | — | Corre los cinco pasos en orden |
 | `comun.py` | — | Rutas, carga del CSV, colores y estilo de gráficos compartidos |
 
 ## Cómo correrlo
@@ -23,7 +24,8 @@ Desde esta carpeta, con el entorno virtual del TP:
 ../.venv/bin/python ejecutar_todo.py           # o cada script por separado, en orden
 ```
 
-`03` y `04` leen `salidas/dataset_preprocesado.csv`, que genera `02`.
+`03` y `04` leen `salidas/dataset_preprocesado.csv`, que genera `02`. `05` lee el dataset completo
+(necesita las filas 2026) y usa scikit-learn.
 
 **Como notebook:** cada script está dividido en celdas con `# %%`. En VS Code (extensión
 Jupyter) aparece "Run Cell" sobre cada una y se ejecutan como en Colab. Para Google Colab:
@@ -65,12 +67,17 @@ genera (`04_3_...` es la tercera figura de `04`).
 | `04` | 2.2 Correlaciones | `Series.corr` (Pearson) y `DataFrame.corr(method="spearman")`; eliminación por pares automática |
 | `04` | 2.2.4 Por año | `groupby("year")[...].apply(...)` calculando una correlación por grupo |
 | `04` | 2.4 Líneas base | Predicciones ingenuas como columnas y error absoluto medio; el castigo de cada año se promedia sobre los otros años (`castigo.drop(a).mean()`) |
+| `05` | 1. Variables | Cuotas pasadas al punto de vista del partido del presidente y centradas en 0,5 (`signo * (cuota - 0.5)`) |
+| `05` | 2. Validación | `LeaveOneGroupOut` con `groups=year`: cada pliegue deja afuera un medio término entero; regla de un error estándar para elegir modelo |
+| `05` | 3. Hipótesis | `LinearRegression` reestimada en cada pliegue; se mira el signo del intercepto y de las pendientes |
+| `05` | 5. Bancas | `np.polyfit` de bancas D sobre la cuota D nacional en 11 elecciones; error dejando afuera cada una |
+| `05` | 7. Incertidumbre | Monte Carlo con `numpy.random.default_rng`: ola nacional + desvío por estado + error de la curva |
 
 ## Salidas
 
 - `figuras/`: los gráficos en PNG.
 - `salidas/`: tablas en CSV (dataset preprocesado, estadísticos, matrices de correlación,
-  efecto de medio término, líneas base).
+  efecto de medio término, líneas base y, con prefijo `predictivo_`, las del modelo).
 - La consola muestra los resultados numéricos y su interpretación paso a paso.
 
 ## Qué muestra cada figura
@@ -89,6 +96,13 @@ genera (`04_3_...` es la tercera figura de `04`).
 | `04_6_correlacion_por_anio` | ¿La presidencial anterior anticipa mejor el medio término en los años recientes? |
 | `04_7_efecto_medio_termino` | ¿El partido del presidente pierde votos en cada medio término? |
 | `04_8_swing_vs_resultado_previo` | ¿Pierde más donde estaba más fuerte? |
+| `05_1_comparacion_modelos` | ¿Qué modelo erra menos al predecir un medio término que no vio? |
+| `05_2_predicho_vs_real` | ¿Qué tan cerca queda la predicción fuera de muestra de cada estado? |
+| `05_3_error_nacional_por_anio` | ¿Cuánto erra el modelo la ola nacional de cada año? |
+| `05_4_coeficientes_por_pliegue` | ¿Se sostienen H1, H2 y H3 al dejar afuera cualquier año? |
+| `05_5_prediccion_2026_estados` | ¿Qué cuota D predice el modelo para cada estado en 2026? |
+| `05_6_bancas_2026` | ¿Cuántas bancas D y con qué probabilidad de mayoría? |
+| `05_7_curva_votos_bancas` | ¿Cuántas bancas da cada punto de voto nacional? |
 
 ## Hallazgos principales
 
@@ -107,4 +121,16 @@ genera (`04_3_...` es la tercera figura de `04`).
 5. **Pocos casos competitivos:** 27 de 250 estado-año caen entre 48 % y 52 %.
 
 Correlación no implica causalidad: estos resultados orientan la elección de variables para
-el modelo predictivo de la próxima etapa.
+el modelo predictivo.
+
+## Resultados del modelo predictivo
+
+1. **Las tres hipótesis se sostienen al dejar afuera cualquier medio término:** la presidencial
+   anticipa (pendiente ≈ 1), el partido del presidente pierde 4,6–5,5 pp en un estado parejo y el
+   voto a la Cámara vuelve hacia el 50 % (pendiente 0,70–0,80).
+2. **Modelo elegido:** regresión lineal múltiple con contexto nacional. Error medio fuera de
+   muestra de 3,5 pp por estado, contra 4,3 pp de la mejor línea base.
+3. **Predicción 2026:** 54,0 % D del voto bipartidista a la Cámara (p10–p90: 51,7–56,2 %) y
+   236 bancas D (p10–p90: 217–256); mayoría D en el 88 % de las simulaciones.
+4. Usa solo fundamentos electorales: no incluye encuestas, aprobación presidencial ni los mapas
+   redibujados en 2025–2026.
