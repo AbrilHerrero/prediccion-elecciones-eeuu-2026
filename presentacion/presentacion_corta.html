@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Medio término 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fondo: #fcfcfb;
+    --fondo-exterior: #e9e8e3;
+    --superficie: #f4f3ef;
+    --borde: #e1e0d9;
+    --tinta: #0b0b0b;
+    --tinta-2: #52514e;
+    --tinta-3: #898781;
+    --azul-d: #2a78d6;
+    --rojo-r: #e34948;
+    --violeta: #4a3aa7;
+    --violeta-suave: #ecebf7;
+    --ok: #2f7d4f;
+    --ok-suave: #e5f2ea;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--fondo-exterior);
+    color: var(--tinta);
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    overflow: hidden;
+  }
+
+  /* ---------- Escenario: cada diapositiva mide 1280 x 720 y se escala a la ventana ---------- */
+  .escenario { position: fixed; inset: 0; display: grid; place-items: center; }
+  .lienzo { width: 1280px; height: 720px; position: relative; transform-origin: center center; }
+  .slide {
+    position: absolute; inset: 0;
+    background: var(--fondo);
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.12);
+    padding: 60px 80px 64px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .slide.activa { display: flex; }
+
+  /* ---------- Tipografía ---------- */
+  .seccion {
+    font-size: 14px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--violeta); margin-bottom: 12px;
+  }
+  h1 { font-size: 58px; line-height: 1.05; font-weight: 800; letter-spacing: -.02em; }
+  h2 { font-size: 38px; line-height: 1.15; font-weight: 700; letter-spacing: -.01em; margin-bottom: 28px; }
+  h3 { font-size: 21px; font-weight: 700; margin-bottom: 8px; }
+  p, li { font-size: 21px; line-height: 1.5; color: var(--tinta-2); }
+  li { margin-bottom: 10px; }
+  ul { padding-left: 24px; }
+  strong { color: var(--tinta); font-weight: 600; }
+  .chico { font-size: 17px; }
+  .nota { font-size: 15px; color: var(--tinta-3); }
+  .d { color: var(--azul-d); }
+  .r { color: var(--rojo-r); }
+
+  /* ---------- Disposición ---------- */
+  .cuerpo { flex: 1; min-height: 0; display: flex; gap: 48px; }
+  .col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 18px; }
+  .col-2 { flex: 2; }
+  .centro { justify-content: center; }
+  .fig { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+  .fig img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; }
+
+  /* ---------- Componentes ---------- */
+  .tarjeta {
+    background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px;
+    padding: 22px 24px;
+  }
+  .tarjeta p { font-size: 18px; }
+  .grilla-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .cifra { font-size: 72px; font-weight: 800; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .cifra-etiqueta { font-size: 17px; color: var(--tinta-2); margin-top: 8px; line-height: 1.4; }
+  .etiqueta {
+    display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: .04em;
+    padding: 4px 10px; border-radius: 999px; margin-bottom: 10px;
+    background: var(--ok-suave); color: var(--ok);
+  }
+  table { border-collapse: collapse; width: 100%; font-size: 18px; font-variant-numeric: tabular-nums; }
+  th { text-align: left; font-weight: 600; color: var(--tinta-3); font-size: 13px; text-transform: uppercase; letter-spacing: .05em; padding: 8px 12px; border-bottom: 1px solid var(--borde); }
+  td { padding: 7px 12px; border-bottom: 1px solid var(--borde); color: var(--tinta-2); }
+  td.num, th.num { text-align: right; }
+  .destacado {
+    border-left: 4px solid var(--violeta); background: var(--violeta-suave);
+    padding: 16px 20px; border-radius: 0 10px 10px 0;
+  }
+  .destacado p { color: var(--tinta); font-size: 21px; }
+
+  /* Diagrama de pasos */
+  .pasos { display: flex; align-items: stretch; }
+  .paso { flex: 1; background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px; padding: 20px 20px; }
+  .paso .num {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--violeta); color: #fff;
+    display: grid; place-items: center; font-weight: 700; font-size: 15px; margin-bottom: 12px;
+  }
+  .paso h3 { font-size: 19px; }
+  .paso p { font-size: 16.5px; line-height: 1.45; }
+  .flecha { display: flex; align-items: center; padding: 0 10px; color: var(--violeta); font-size: 28px; font-weight: 700; }
+
+  /* Barra de bancas: 435 bancas, mayoría en 218 */
+  .bancas { position: relative; margin: 44px 0 64px; }
+  .barra { display: flex; height: 64px; border-radius: 8px; overflow: hidden; }
+  .barra .seg-d { background: var(--azul-d); }
+  .barra .seg-r { background: var(--rojo-r); }
+  .barra span {
+    display: flex; align-items: center; padding: 0 18px; color: #fff; font-weight: 700; font-size: 20px;
+  }
+  .barra .seg-r { justify-content: flex-end; }
+  .marca-mayoria { position: absolute; top: -30px; bottom: -12px; border-left: 2px dashed var(--tinta); }
+  .marca-mayoria b {
+    position: absolute; top: 0; left: 8px; white-space: nowrap; font-size: 14px; font-weight: 600; color: var(--tinta);
+  }
+  .rango { position: absolute; top: 80px; height: 14px; border: 2px solid var(--tinta-2); border-top: none; }
+  .rango b {
+    position: absolute; top: 18px; left: 50%; transform: translateX(-50%); white-space: nowrap;
+    font-size: 14px; font-weight: 500; color: var(--tinta-2);
+  }
+
+  /* ---------- Controles ---------- */
+  .progreso { position: fixed; left: 0; top: 0; height: 3px; background: var(--violeta); transition: width .25s; z-index: 5; }
+  .controles {
+    position: fixed; right: 16px; bottom: 14px; display: flex; gap: 8px; align-items: center; z-index: 5;
+    font-size: 13px; color: var(--tinta-2);
+  }
+  .controles button {
+    border: 1px solid var(--borde); background: var(--fondo); color: var(--tinta);
+    width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 16px;
+  }
+  .controles button:hover { background: var(--superficie); }
+  .contador { min-width: 50px; text-align: center; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Impresión: una diapositiva por página (para exportar a PDF) ---------- */
+  @media print {
+    @page { size: 1280px 720px; margin: 0; }
+    body { overflow: visible; background: #fff; }
+    .escenario { position: static; display: block; }
+    .lienzo { transform: none !important; width: 1280px; height: auto; }
+    .slide { display: flex !important; position: relative; width: 1280px; height: 720px; box-shadow: none; border-radius: 0; page-break-after: always; break-after: page; }
+    .controles, .progreso { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="progreso" id="progreso"></div>
+<div class="escenario">
+<div class="lienzo" id="lienzo">
+
+<!-- 1 ─────────────────────────── Portada -->
+<section class="slide" data-titulo="Portada">
+  <div class="col centro" style="flex:1">
+    <div class="seccion">Ciencia de Datos · Trabajo práctico 2026</div>
+    <h1>¿Quién va a ganar el Congreso<br>de Estados Unidos en 2026?</h1>
+    <p style="font-size:24px;margin-top:26px;max-width:900px">
+      Una predicción de la elección del <strong>3 de noviembre de 2026</strong> hecha solo con los
+      resultados oficiales de las elecciones pasadas.
+    </p>
+  </div>
+</section>
+
+<!-- 2 ─────────────────────────── Contexto -->
+<section class="slide" data-titulo="Qué se vota">
+  <div class="seccion">El contexto</div>
+  <h2>Qué se vota y qué queremos saber</h2>
+  <div class="cuerpo">
+    <div class="col">
+      <ul>
+        <li>La <strong>Cámara de Representantes</strong> tiene <strong>435 bancas</strong>. El partido que gana <strong>218</strong> tiene la mayoría.</li>
+        <li>Se vota cada 2 años. La elección que cae a mitad del mandato del presidente se llama <strong>"de medio término"</strong>.</li>
+        <li>Compiten dos partidos: <strong class="d">demócratas</strong> y <strong class="r">republicanos</strong>. Hoy el presidente es republicano (Trump).</li>
+      </ul>
+    </div>
+    <div class="col centro">
+      <div class="destacado">
+        <p>¿Podemos anticipar el resultado mirando cómo votó cada estado en la elección presidencial de dos años antes?</p>
+      </div>
+      <p class="chico">Usamos los resultados oficiales de los 50 estados en las elecciones de 2004 a 2024.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 ─────────────────────────── Hipótesis -->
+<section class="slide" data-titulo="Hipótesis">
+  <div class="seccion">Lo que queríamos comprobar</div>
+  <h2>Nuestras tres hipótesis</h2>
+  <div class="grilla-3">
+    <div class="tarjeta">
+      <h3>1. El pasado anticipa</h3>
+      <p>Un estado vota en el medio término parecido a como votó en la elección presidencial de dos años antes.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>2. El presidente paga un costo</h3>
+      <p>El partido del presidente pierde votos en el medio término, sea demócrata o republicano.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>3. Las ventajas grandes se achican</h3>
+      <p>Donde el partido del presidente había ganado por mucho, pierde más.</p>
+    </div>
+  </div>
+  <p style="margin-top:34px">Para comprobarlas comparamos <strong>5 elecciones de medio término</strong> (2006, 2010, 2014, 2018 y 2022) con la presidencial anterior a cada una: <strong>250 casos</strong> (50 estados × 5 elecciones).</p>
+</section>
+
+<!-- 4 ─────────────────────────── Qué encontramos -->
+<section class="slide" data-titulo="Qué encontramos">
+  <div class="seccion">Resultado</div>
+  <h2>Las tres hipótesis se cumplieron</h2>
+  <div class="cuerpo">
+    <div class="col col-2">
+      <div class="fig"><img src="../analisis_exploratorio/figuras/03_1_bancas_antes_despues.png" alt="Bancas de cada partido antes y después de cada medio término"></div>
+      <p class="nota">Cada par de barras: bancas después de la presidencial y después del medio término. Azul = demócratas, rojo = republicanos.</p>
+    </div>
+    <div class="col centro" style="gap:14px">
+      <div class="tarjeta"><span class="etiqueta">✓ HIPÓTESIS 1</span><p>Los estados votan casi igual que dos años antes, y cada vez más.</p></div>
+      <div class="tarjeta"><span class="etiqueta">✓ HIPÓTESIS 2</span><p>El partido del presidente perdió bancas <strong>las 5 veces</strong>: unos 5 puntos de votos en un estado parejo.</p></div>
+      <div class="tarjeta"><span class="etiqueta">✓ HIPÓTESIS 3</span><p>Donde había ganado por mucho, su ventaja se achicó más.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 ─────────────────────────── El modelo -->
+<section class="slide" data-titulo="El modelo">
+  <div class="seccion">Cómo predecimos</div>
+  <h2>El modelo: aprende de las elecciones pasadas</h2>
+  <div class="pasos">
+    <div class="paso">
+      <div class="num">1</div>
+      <h3>Punto de partida</h3>
+      <p>Cómo votó cada estado en la última elección presidencial (2024).</p>
+    </div>
+    <div class="flecha">→</div>
+    <div class="paso">
+      <div class="num">2</div>
+      <h3>Restar el costo</h3>
+      <p>Le resta al partido del presidente lo que suele perder en un medio término.</p>
+    </div>
+    <div class="flecha">→</div>
+    <div class="paso">
+      <div class="num">3</div>
+      <h3>Voto por estado</h3>
+      <p>Obtiene el porcentaje de votos de cada partido en los 50 estados.</p>
+    </div>
+    <div class="flecha">→</div>
+    <div class="paso">
+      <div class="num">4</div>
+      <h3>De votos a bancas</h3>
+      <p>Convierte el total de votos en bancas según lo que pasó en las últimas 11 elecciones.</p>
+    </div>
+  </div>
+  <div class="cuerpo" style="margin-top:34px;gap:28px">
+    <div class="col">
+      <h3>¿Cómo sabemos que funciona?</h3>
+      <p>Lo pusimos a prueba con el pasado: le "tapamos" una elección, lo entrenamos con las otras cuatro y le pedimos que la adivinara. Repetimos con cada una.</p>
+    </div>
+    <div class="col" style="flex-direction:row;gap:28px;align-items:center">
+      <div><div class="cifra" style="font-size:56px">3,5</div><div class="cifra-etiqueta">puntos de error promedio por estado</div></div>
+      <div><div class="cifra" style="font-size:56px">92 %</div><div class="cifra-etiqueta">de los casos acertó qué partido sacó más votos</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 ─────────────────────────── Predicción -->
+<section class="slide" data-titulo="Predicción 2026">
+  <div class="seccion">La predicción</div>
+  <h2>Para 2026, el modelo da ganadores a los demócratas</h2>
+  <div class="grilla-3">
+    <div><div class="cifra d">54 %</div><div class="cifra-etiqueta">de los votos para los demócratas<br>(en 2024 sacaron 48,7 %)</div></div>
+    <div><div class="cifra d">236</div><div class="cifra-etiqueta">bancas demócratas de 435<br>(necesitan 218)</div></div>
+    <div><div class="cifra">88 de 100</div><div class="cifra-etiqueta">escenarios simulados en los que<br>los demócratas ganan la mayoría</div></div>
+  </div>
+  <div class="bancas" aria-label="Bancas previstas: 236 demócratas y 199 republicanas; rango probable de 217 a 256 bancas demócratas">
+    <div class="barra">
+      <span class="seg-d" style="width:54.25%">236 demócratas</span>
+      <span class="seg-r" style="width:45.75%">199 republicanos</span>
+    </div>
+    <div class="marca-mayoria" style="left:50.11%"><b>mayoría: 218</b></div>
+    <div class="rango" style="left:49.89%;width:8.97%"><b>rango probable: 217 a 256</b></div>
+  </div>
+  <p class="chico">Simulamos 10.000 elecciones con los errores que tuvo el modelo en el pasado. En la mayoría los demócratas superan las 218 bancas, pero en 12 de cada 100 no llegan.</p>
+  <div class="destacado" style="margin-top:22px">
+    <p style="font-size:16px"><strong>¿Qué es el 54&nbsp;%?</strong> Solo contamos los votos a demócratas y republicanos
+      de todo el país: D ÷ (D + R). El resto hasta el 100&nbsp;% es republicano (54&nbsp;% D = 46&nbsp;% R), así que
+      más del 50&nbsp;% = más votos demócratas.</p>
+  </div>
+</section>
+
+<!-- 7 ─────────────────────────── Por estado -->
+<section class="slide" data-titulo="Por estado">
+  <div class="seccion">La predicción, estado por estado</div>
+  <h2>46 de los 50 estados votarían más a los demócratas</h2>
+  <div class="cuerpo">
+    <div class="col">
+      <div class="fig"><img src="../analisis_exploratorio/figuras/05_5_prediccion_2026_estados.png" alt="Voto demócrata de cada estado en 2024 y predicción para 2026"></div>
+      <p class="nota">Círculo gris = 2024. Punto de color = predicción 2026 (azul si pasa el 50&nbsp;%).</p>
+    </div>
+    <div class="col centro">
+      <h3>7 estados pasarían a votar más demócrata</h3>
+      <table>
+        <tr><th>Estado</th><th class="num">Bancas</th><th class="num">2024</th><th class="num">2026</th></tr>
+        <tr><td>Michigan</td><td class="num">13</td><td class="num">49,4 %</td><td class="num d">53,6 %</td></tr>
+        <tr><td>Pensilvania</td><td class="num">17</td><td class="num">49,0 %</td><td class="num d">53,3 %</td></tr>
+        <tr><td>Nevada</td><td class="num">4</td><td class="num">43,5 %</td><td class="num d">53,3 %</td></tr>
+        <tr><td>Wisconsin</td><td class="num">8</td><td class="num">48,5 %</td><td class="num d">52,1 %</td></tr>
+        <tr><td>Georgia</td><td class="num">14</td><td class="num">47,4 %</td><td class="num d">52,0 %</td></tr>
+        <tr><td>Arizona</td><td class="num">9</td><td class="num">48,0 %</td><td class="num d">51,5 %</td></tr>
+        <tr><td>Carolina del Norte</td><td class="num">14</td><td class="num">44,8 %</td><td class="num d">50,8 %</td></tr>
+      </table>
+      <div class="destacado">
+        <p style="font-size:16px"><strong>¿Qué es el porcentaje?</strong> Solo contamos los votos a demócratas
+          y republicanos: D ÷ (D + R). El resto hasta el 100&nbsp;% es republicano (53,6&nbsp;% D = 46,4&nbsp;% R),
+          así que más del 50&nbsp;% = más votos demócratas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 ─────────────────────────── Cierre -->
+<section class="slide" data-titulo="Conclusión">
+  <div class="seccion">Cierre</div>
+  <h2>En resumen</h2>
+  <div class="cuerpo">
+    <div class="col col-2">
+      <ul>
+        <li>Cómo votó un estado en la presidencial <strong>anticipa bien</strong> cómo vota dos años después.</li>
+        <li>El partido del presidente <strong>siempre pierde</strong> en el medio término, sea cual sea.</li>
+        <li>Con esas dos ideas, el modelo predice una <strong class="d">mayoría demócrata en 2026</strong>: unas 236 bancas.</li>
+      </ul>
+    </div>
+    <div class="col centro">
+      <div class="tarjeta">
+        <h3>Con qué cuidado leerlo</h3>
+        <ul class="chico" style="padding-left:20px">
+          <li class="chico">No usa encuestas: solo resultados de elecciones pasadas.</li>
+          <li class="chico">Solo hay 5 elecciones de medio término para aprender.</li>
+          <li class="chico">Algunos estados cambiaron sus distritos en 2025–2026.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+
+<div class="controles">
+  <button id="anterior" aria-label="Diapositiva anterior">‹</button>
+  <span class="contador" id="contador">1 / 1</span>
+  <button id="siguiente" aria-label="Diapositiva siguiente">›</button>
+</div>
+
+<script>
+  const slides = [...document.querySelectorAll(".slide")];
+  const lienzo = document.getElementById("lienzo");
+  const contador = document.getElementById("contador");
+  const progreso = document.getElementById("progreso");
+  let actual = 0;
+
+  function mostrar(n) {
+    actual = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, i) => s.classList.toggle("activa", i === actual));
+    contador.textContent = `${actual + 1} / ${slides.length}`;
+    progreso.style.width = `${((actual + 1) / slides.length) * 100}%`;
+    history.replaceState(null, "", `#${actual + 1}`);
+    document.title = `${actual + 1}. ${slides[actual].dataset.titulo} · Medio término 2026`;
+  }
+
+  function escalar() {
+    const margen = 24;
+    const escala = Math.min((innerWidth - margen) / 1280, (innerHeight - margen) / 720);
+    lienzo.style.transform = `scale(${escala})`;
+  }
+
+  document.getElementById("anterior").onclick = () => mostrar(actual - 1);
+  document.getElementById("siguiente").onclick = () => mostrar(actual + 1);
+  addEventListener("keydown", (e) => {
+    if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); mostrar(actual + 1); }
+    if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); mostrar(actual - 1); }
+    if (e.key === "Home") mostrar(0);
+    if (e.key === "End") mostrar(slides.length - 1);
+    if (e.key === "f") document.documentElement.requestFullscreen?.();
+  });
+  addEventListener("resize", escalar);
+
+  escalar();
+  mostrar((parseInt(location.hash.slice(1), 10) || 1) - 1);
+</script>
+</body>
+</html>

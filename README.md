@@ -67,8 +67,10 @@ dataset columna por columna, ver el [`GLOSARIO.md`](GLOSARIO.md).
     ├── figuras/                    # gráficos generados (PNG)
     └── salidas/                    # tablas generadas (CSV)
 presentacion/
-├── presentacion.html               # diapositivas (abrir en el navegador)
-└── guion.md                        # qué decir en cada diapositiva
+├── presentacion_corta.html         # versión breve: hipótesis, modelo y predicción (8 diapositivas)
+├── guion_corto.md                  # qué decir en cada diapositiva de la versión breve
+├── presentacion_larga.html         # versión completa del trabajo (26 diapositivas)
+└── guion_largo.md                  # qué decir en cada diapositiva de la versión completa
 ```
 
 ## Cómo reproducirlo

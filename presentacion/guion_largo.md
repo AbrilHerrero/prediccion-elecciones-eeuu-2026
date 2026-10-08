@@ -1,11 +1,11 @@
 # Guion de la presentación — Medio término 2026
 
-Qué decir en cada diapositiva de [`presentacion.html`](presentacion.html). Duración total
+Qué decir en cada diapositiva de [`presentacion_larga.html`](presentacion_larga.html). Duración total
 estimada: **20–25 minutos** (unos 50 segundos por diapositiva).
 
 **Cómo usar la presentación:** abrirla en el navegador (Chrome o Firefox). Flechas ← → o la barra
 espaciadora para avanzar, `F` para pantalla completa, `Inicio`/`Fin` para ir al principio o al
-final. La dirección muestra el número de diapositiva (`presentacion.html#18` abre la 18). Para
+final. La dirección muestra el número de diapositiva (`presentacion_larga.html#18` abre la 18). Para
 exportarla a PDF: Imprimir → Guardar como PDF (sale una diapositiva por página).
 
 Cada sección tiene:
